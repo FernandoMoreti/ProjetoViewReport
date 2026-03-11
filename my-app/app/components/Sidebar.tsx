@@ -1,7 +1,8 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, LayoutGrid } from 'lucide-react';
+import { Search, LayoutGrid, ChevronDown, Landmark, ChevronRight } from 'lucide-react';
+import axios from 'axios';
 
 interface Bank {
   id: string;
@@ -9,27 +10,25 @@ interface Bank {
   active: boolean;
 }
 
-const banks: Bank[] = [
-  { id: 'bradesco8', name: 'Dashboard', active: false },
-  { id: 'all', name: 'ALL BAnks to process', active: false },
-  { id: 'c6', name: 'C6 Bank', active: false },
-  { id: 'pan', name: 'Banco PAN', active: false },
-  { id: 'daycoval', name: 'Daycoval', active: false },
-  { id: 'inter', name: 'Inter', active: false },
-  { id: 'itau', name: 'Itaú Unibanco', active: false },
-  { id: 'bradesco7', name: 'Bradesco', active: false },
-  { id: 'daycoval1', name: 'Daycoval1', active: false },
-  { id: 'inter2', name: 'Inter1', active: false },
-  { id: 'itau3', name: 'Itaú Unibanco1', active: false },
-  { id: 'bradesco', name: 'Bradesco1', active: false },
-  { id: 'bradesco1', name: 'Bradesco1', active: false },
-  { id: 'bradesco3', name: 'Bradesco1', active: false },
-  { id: 'bradesco4', name: 'Bradesco1', active: false },
-];
 
 export default function Sidebar() {
 
   const [ isActivate, setIsActivate ] = useState<string>('')
+  const [ banks, setBanks ] = useState<Bank[]>([])
+  const [isBanksOpen, setIsBanksOpen] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function getBanks() {
+      try {
+        const response = await axios.get('http://localhost:3003/banks')
+        setBanks(response.data)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    getBanks()
+  }, [])
 
   return (
 
@@ -59,23 +58,36 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 space-y-2">
-        {banks.map((bank) => (
-          <Link
-            href={`?bank=${bank.name}`}
-            key={bank.id}
-            className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group ${
-              isActivate == bank.name
-                ? 'bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)]'
-                : 'hover:bg-white/5 text-purple-200/70 hover:text-white'
-            }`}
-            onClick={() => {
-                setIsActivate(bank.name)
-            }}
-          >
-            <span className="text-sm font-medium tracking-wide">{bank.name}</span>
-          </Link>
-        ))}
+      <nav className="flex-1 overflow-y-auto px-3 space-y-1">
+        <button
+          onClick={() => setIsBanksOpen(!isBanksOpen)}
+          className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <Landmark size={18} className="text-purple-400" />
+            <span className="text-sm font-semibold tracking-wide">Bancos</span>
+          </div>
+          {isBanksOpen ? <ChevronDown size={16} className="text-purple-500" /> : <ChevronRight size={16} className="text-purple-500" />}
+        </button>
+
+        {/* LISTA DE BANCOS COM EFEITO HIDDEN/FLEX */}
+        <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isBanksOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+          {banks.map((bank) => (
+            <Link
+              href={`?bank=${bank.name}`}
+              key={bank.id}
+              className={`ml-4 flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 group ${
+                isActivate === bank.name
+                  ? 'bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-lg'
+                  : 'hover:bg-white/5 text-purple-200/60 hover:text-white'
+              }`}
+              onClick={() => setIsActivate(bank.name)}
+            >
+              <div className={`w-1.5 h-1.5 rounded-full ${isActivate === bank.name ? 'bg-white' : 'bg-purple-900 group-hover:bg-purple-500'}`} />
+              <span className="text-sm font-medium">{bank.name}</span>
+            </Link>
+          ))}
+        </div>
       </nav>
     </div>
   );

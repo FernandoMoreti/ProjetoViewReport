@@ -1,4 +1,4 @@
-import { Calendar } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Header() {
   return (
@@ -10,12 +10,13 @@ export default function Header() {
         </h1>
       </div>
 
-      <div className="flex items-center gap-6">
-
-        <button className="p-2 hover:bg-white/5 text-purple-300/70 hover:text-white rounded-lg transition-all">
-        <Calendar size={18} />
-        </button>
-      </div>
+      <nav className="flex items-center gap-6">
+        <Link
+          href={`?bank=`}
+        >
+          Adicionar
+        </Link>
+      </nav>
     </header>
   );
 }

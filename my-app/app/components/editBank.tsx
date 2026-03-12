@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FileText, Loader, Save, Trash2 } from 'lucide-react';
+import { FileText, Loader, Save } from 'lucide-react';
 import axios from "axios";
 
 interface BankAttributes {
@@ -51,8 +51,6 @@ export default function EditBank() {
     setLoading(true);
     try {
 
-      console.log(banks)
-
       await axios.put("http://localhost:3003/banks", { banks });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -68,29 +66,6 @@ export default function EditBank() {
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white items-center justify-start">
         <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="pb-6 flex justify-end">
-                <button
-                    type="submit"
-                    className="flex items-center gap-3 p-3 px-8 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold text-sm"
-                >
-                    {
-                        loading
-                        ? (
-                            <>
-                                <Loader className="animate-spin"/>
-                                <p>Salvando...</p>
-                            </>
-                            )
-                        : (
-                            <>
-                                <Save size={18} />
-                                <p>SALVAR BANCOS</p>
-                            </>
-                        )
-                    }
-                </button>
-            </div>
-
             <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl w-full">
                 <div className="overflow-hidden rounded-[22px]">
                     <table className="w-full text-left border-collapse">
@@ -131,6 +106,28 @@ export default function EditBank() {
                         </tbody>
                     </table>
                 </div>
+            </div>
+            <div className="mt-6 pb-6 flex justify-center">
+                <button
+                    type="submit"
+                    className="flex items-center gap-3 p-3 px-8 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold text-sm"
+                >
+                    {
+                        loading
+                        ? (
+                            <>
+                                <Loader className="animate-spin"/>
+                                <p>Salvando...</p>
+                            </>
+                            )
+                        : (
+                            <>
+                                <Save size={18} />
+                                <p>SALVAR BANCOS</p>
+                            </>
+                        )
+                    }
+                </button>
             </div>
         </form>
     </section>

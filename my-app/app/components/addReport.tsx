@@ -74,26 +74,38 @@ export default function AddReport({ bank }: PropsAdd) {
       <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         <div className="pb-4 flex justify-between">
-          <div>
-            <label className="text-purple-400 text-xs font-bold uppercase mb-2 block">Data de Referência</label>
-            <select
-              id="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-[#1a0b2e] w-35 text-purple-300 border border-purple-900/50 rounded-lg p-2 text-sm outline-none focus:ring-1 focus:ring-[#9823ff]"
-            >
-              {last30Days.map((date) => (
-                <option key={date} value={date} className="bg-[#1a0b2e]">
-                  {date.split('-').reverse().join('/')}
-                </option>
-              ))}
-            </select>
+          <div className="pb-4 flex justify-between">
+            <div className="flex flex-col">
+              <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
+                Data de Referência
+              </label>
+
+              <div className="relative group">
+                <Calendar
+                  size={16}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
+                />
+
+                <input
+                  type="date"
+                  id="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
+                />
+              </div>
+            </div>
           </div>
-          <button
-            className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
-          >
-            Salvar Novos Relatorios
-          </button>
+          <div className="flex justify-center mt-10">
+            <button
+              type="button"
+              className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
+              onClick={handleAddReport}
+            >
+              <Plus size={20} />
+              ADICIONAR RELATÓRIO
+            </button>
+          </div>
         </div>
 
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
@@ -120,7 +132,7 @@ export default function AddReport({ bank }: PropsAdd) {
                   reports.map((report, index) => (
                     <tr key={index} className="animate-in fade-in duration-300">
                       <td className="px-6 py-8">
-                        <div className="flex items-center justify-center gap-2 text-xs text-white">
+                        <div className="flex items-center justify-center gap-2 text-sm text-white">
                           <Calendar size={14} className="text-purple-500" />
                           {report.dateOfReport.split('-').reverse().join('/')}
                         </div>
@@ -168,7 +180,7 @@ export default function AddReport({ bank }: PropsAdd) {
                           type="date"
                           value={report.processedAt || ""}
                           onChange={(e) => updateField(index, 'processedAt', e.target.value)}
-                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-xs text-white outline-none focus:border-[#9823ff]"
+                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff]"
                         />
                       </td>
 
@@ -188,17 +200,14 @@ export default function AddReport({ bank }: PropsAdd) {
             </table>
           </div>
         </div>
+        <div className="flex pt-6 w-full justify-center">
+          <button
+            className="flex justify-center items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
+          >
+            Salvar Novos Relatorios
+          </button>
+        </div>
       </form>
-
-      <div className="flex justify-center mt-10">
-        <button
-          className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
-          onClick={handleAddReport}
-        >
-          <Plus size={20} />
-          ADICIONAR RELATÓRIO
-        </button>
-      </div>
     </section>
   );
 }

@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Search, LayoutGrid, ChevronDown, Landmark, ChevronRight } from 'lucide-react';
+import { LayoutGrid, ChevronDown, Landmark, ChevronRight } from 'lucide-react';
 import axios from 'axios';
 
 interface Bank {
@@ -75,9 +75,13 @@ export default function Sidebar() {
           ))}
           <Link
               href={`?bank=Adicionar Banco`}
-              onClick={() => setIsActivate('')}
+              onClick={() => setIsActivate('ADICIONAR BANCO')}
               key={1}
-              className={'ml-4 flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 group bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-lg'}
+              className={`ml-4 flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 group ${
+                isActivate === 'ADICIONAR BANCO'
+                  ? 'bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-lg'
+                  : 'hover:bg-white/5 text-purple-200/60 hover:text-white'
+              }`}
             >
               <span className="text-sm font-medium">ADICIONAR BANCO</span>
             </Link>

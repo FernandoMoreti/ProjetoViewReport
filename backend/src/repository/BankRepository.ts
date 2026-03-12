@@ -8,7 +8,11 @@ interface BankAtt {
 export class BankRepository {
     async getAll() {
         try {
-            return Bank.findAll()
+            return Bank.findAll({
+                order: [
+                    ['name', 'ASC']
+                ]
+            })
         } catch (error) {
             throw error
         }

@@ -1,7 +1,6 @@
 'use client'
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FileText, Calendar, Loader } from 'lucide-react';
+import { FileText, Calendar } from 'lucide-react';
 import { generateLast30Days } from "../utils/utils";
 import axios from "axios";
 
@@ -58,20 +57,27 @@ export default function ViewReport({ bank }: PropsEdit) {
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
       <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="pb-4 flex flex-col justify-between">
-            <label className="text-purple-400 text-xs font-bold uppercase mb-2 block">Data de Referência</label>
-            <select
+        <div className="pb-4 flex justify-between">
+          <div className="flex flex-col">
+            <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
+              Data de Referência
+            </label>
+
+            <div className="relative group">
+              <Calendar
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
+              />
+
+              <input
+                type="date"
                 id="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-[#1a0b2e] w-35 text-purple-300 border border-purple-900/50 rounded-lg p-2 text-sm outline-none focus:ring-1 focus:ring-[#9823ff]"
-            >
-                {last30Days.map((date) => (
-                <option key={date} value={date} className="bg-[#1a0b2e]">
-                    {date.split('-').reverse().join('/')}
-                </option>
-                ))}
-            </select>
+                className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
@@ -104,14 +110,14 @@ export default function ViewReport({ bank }: PropsEdit) {
                       </td>
 
                       <td className="px-6 py-8">
-                        <div className="flex justify-center gap-2 text-xs text-white">
+                        <div className="flex justify-center gap-2 text-sm text-white">
                           <Calendar size={18} className="text-purple-500" />
                           <p className="text-sm">{report.dateOfReport.split('-').reverse().join('/')}</p>
                         </div>
                       </td>
 
                       <td className="px-4">
-                        <div className="flex justify-center gap-2 text-xs text-white">
+                        <div className="flex justify-center gap-2 text-sm text-white">
                           <FileText className="left-3 text-purple-500" size={18} />
                           <p className="text-sm">{report.filename}</p>
                         </div>
@@ -145,7 +151,7 @@ export default function ViewReport({ bank }: PropsEdit) {
                           type="date"
                           readOnly
                           value={report.processedAt ? report.processedAt.slice(0, 10) : ""}
-                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-xs text-white outline-none focus:border-[#9823ff]"
+                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff]"
                         />
                       </td>
                     </tr>

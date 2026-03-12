@@ -54,29 +54,16 @@ export default function AddBank() {
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white items-center justify-start">
         <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="pb-6 flex justify-end">
+            <div className="flex justify-end pb-6">
                 <button
-                    type="submit"
+                    type="button"
                     className="flex items-center gap-3 p-3 px-8 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold text-sm"
+                    onClick={handleAddReport}
                 >
-                    {
-                        loading
-                        ? (
-                            <>
-                                <Loader className="animate-spin"/>
-                                <p>Salvando...</p>
-                            </>
-                            )
-                        : (
-                            <>
-                                <Save size={18} />
-                                <p>CRIAR BANCOS</p>
-                            </>
-                        )
-                    }
+                    <Plus size={20} className="text-white" />
+                    ADICIONAR NOVA LINHA
                 </button>
             </div>
-
             <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl w-full">
                 <div className="overflow-hidden rounded-[22px]">
                     <table className="w-full text-left border-collapse">
@@ -130,16 +117,27 @@ export default function AddBank() {
                 </div>
             </div>
 
-            {/* Botão Adicionar Centralizado abaixo da tabela */}
-            <div className="flex justify-center mt-10">
-            <button
-                type="button"
-                className="flex items-center gap-3 p-3 px-8 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold text-sm"
-                onClick={handleAddReport}
-            >
-                <Plus size={20} className="text-white" />
-                ADICIONAR NOVA LINHA
-            </button>
+            <div className="pt-6 flex justify-center">
+                <button
+                    type="submit"
+                    className="flex items-center gap-3 p-3 px-8 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold text-sm"
+                >
+                    {
+                        loading
+                        ? (
+                            <>
+                                <Loader className="animate-spin"/>
+                                <p>Salvando...</p>
+                            </>
+                            )
+                        : (
+                            <>
+                                <Save size={18} />
+                                <p>CRIAR BANCOS</p>
+                            </>
+                        )
+                    }
+                </button>
             </div>
         </form>
         </section>

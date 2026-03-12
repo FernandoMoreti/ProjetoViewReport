@@ -29,8 +29,6 @@ export default function EditReport({ bank }: PropsEdit) {
   const [selectedDate, setSelectedDate] = useState(todayStr)
   const [reports, setReports] = useState<ReportAttributes[]>([]);
 
-  const last30Days = generateLast30Days();
-
   useEffect(() => {
     async function getReports() {
       setReports([]);
@@ -89,35 +87,26 @@ export default function EditReport({ bank }: PropsEdit) {
       <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         <div className="pb-4 flex justify-between">
-          <div>
-            <label className="text-purple-400 text-xs font-bold uppercase mb-2 block">Data de Referência</label>
-            <select
-              id="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-[#1a0b2e] w-35 text-purple-300 border border-purple-900/50 rounded-lg p-2 text-sm outline-none focus:ring-1 focus:ring-[#9823ff]"
-            >
-              {last30Days.map((date) => (
-                <option key={date} value={date} className="bg-[#1a0b2e]">
-                  {date.split('-').reverse().join('/')}
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-col">
+            <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
+              Data de Referência
+            </label>
+
+            <div className="relative group">
+              <Calendar
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
+              />
+
+              <input
+                type="date"
+                id="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
+              />
+            </div>
           </div>
-          <button
-            className="flex w-60 items-center justify-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
-          >
-            {
-              loading
-              ? (
-                  <>
-                    <Loader className="animate-spin"/>
-                    <p>Salvando...</p>
-                  </>
-                )
-              : "Salvar Alterações"
-            }
-          </button>
         </div>
 
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
@@ -158,7 +147,7 @@ export default function EditReport({ bank }: PropsEdit) {
                         bank == 'Todos os Bancos'
                         ?
                           <td className="px-6 py-8">
-                            <div className="flex items-center justify-center gap-2 text-xs text-white">
+                            <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
                               {report.bank!.name}
                             </div>
                           </td>
@@ -167,7 +156,7 @@ export default function EditReport({ bank }: PropsEdit) {
 
 
                       <td className="px-6 py-8">
-                        <div className="flex items-center justify-center gap-2 text-xs text-white">
+                        <div className="flex items-center justify-center gap-2 text-sm text-white">
                           <Calendar size={14} className="text-purple-500" />
                           {report.dateOfReport.split('-').reverse().join('/')}
                         </div>
@@ -215,7 +204,7 @@ export default function EditReport({ bank }: PropsEdit) {
                           type="date"
                           value={report.processedAt ? report.processedAt.slice(0, 10) : ""}
                           onChange={(e) => updateField(index, 'processedAt', e.target.value)}
-                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-xs text-white outline-none focus:border-[#9823ff]"
+                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff]"
                         />
                       </td>
                     </tr>
@@ -224,6 +213,22 @@ export default function EditReport({ bank }: PropsEdit) {
               </tbody>
             </table>
           </div>
+        </div>
+        <div className="flex justify-center pt-6">
+          <button
+            className="flex w-60 items-center justify-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
+          >
+            {
+              loading
+              ? (
+                  <>
+                    <Loader className="animate-spin"/>
+                    <p>Salvando...</p>
+                  </>
+                )
+              : "Salvar Alterações"
+            }
+          </button>
         </div>
       </form>
     </section>

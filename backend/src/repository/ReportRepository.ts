@@ -1,4 +1,4 @@
-import { where } from "sequelize"
+import { Op } from "sequelize"
 import { Bank } from "../models"
 import { Report } from "../models"
 
@@ -27,7 +27,10 @@ class ReportRepository {
                     include: [{model: Bank, as: 'bank'}],
                     where: {
                         dateOfReport
-                    }
+                    },
+                    order: [
+                        [{ model: Bank, as: 'bank' }, 'name', 'ASC']
+                    ]
                 },
             )
             return reports
@@ -35,6 +38,26 @@ class ReportRepository {
             throw error
         }
     }
+
+        async getAllLast30Days() {
+            try {
+
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+                return Report.findAll({
+                    where: {
+                        dateOfReport: {
+                            [Op.gte]: thirtyDaysAgo
+                        }
+                    },
+                    order: [['dateOfReport', 'DESC']]
+                })
+            } catch (error) {
+                console.error("Erro ao buscar relatórios dos últimos 30 dias:", error);
+                throw error;
+            }
+        }
 
     async getReportsByDate(bankId: number, date: string) {
         try {
@@ -56,7 +79,7 @@ class ReportRepository {
                 where: {
                     bankId,
                     dateOfReport: date
-                }
+                },
             })
             return reports
         } catch (error) {

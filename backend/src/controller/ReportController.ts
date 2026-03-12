@@ -5,7 +5,7 @@ import { where } from 'sequelize';
 class ReportController {
     async getAll(req: Request, res: Response) {
         try {
-            const reports   = ReportService.getAll()
+            const reports = await ReportService.getAll()
             return res.status(200).json(reports)
         } catch (error) {
             throw error
@@ -15,9 +15,14 @@ class ReportController {
     async getReportsByDate(req: Request, res: Response) {
 
         const { bank, date } = req.body;
+        let reports;
 
         try {
-            const reports = await ReportService.getReportsByDate(bank, date)
+            if (bank == 'Todos os Bancos') {
+                reports = await ReportService.getAllByDate(date)
+            } else {
+                reports = await ReportService.getReportsByDate(bank, date)
+            }
             return res.status(200).json(reports)
         } catch (error) {
             throw error
@@ -34,6 +39,13 @@ class ReportController {
 
 
         const newReports = await ReportService.create(bank, reports)
+        return res.status(200).json(newReports)
+    }
+
+    async update(req: Request, res: Response) {
+        const { reports } = req.body
+
+        const newReports = ReportService.update(reports)
         return res.status(200).json(newReports)
     }
 }

@@ -11,6 +11,15 @@ class ReportService {
         }
     }
 
+    async getAllByDate(dateOfReport: string) {
+        try {
+            const reports = await ReportRepository.getAllByDate(dateOfReport)
+            return reports
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getReportsByDate(bank: string, date: string) {
         try {
 
@@ -45,6 +54,19 @@ class ReportService {
 
         const newReport = await ReportRepository.create(reports)
         return newReport
+    }
+
+    async update(reports: any[]) {
+        try {
+            for (let report of reports) {
+                const { id, filename, processed, processedAt, received } = report
+                await ReportRepository.update({ id, filename, processed, processedAt, received })
+            }
+            return 200
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
     }
 }
 

@@ -15,7 +15,7 @@ export default function Sidebar() {
 
   const [ isActivate, setIsActivate ] = useState<string>('')
   const [ banks, setBanks ] = useState<Bank[]>([])
-  const [isBanksOpen, setIsBanksOpen] = useState<boolean>(true);
+  const [isBanksOpen, setIsBanksOpen] = useState<boolean>(false);
 
   useEffect(() => {
     async function getBanks() {
@@ -34,7 +34,7 @@ export default function Sidebar() {
 
     <div className="flex flex-col h-screen w-76 bg-[#1a0b2e] text-gray-300 font-sans border-r border-purple-900/30">
 
-      <div className="flex items-center justify-between p-5 mb-2">
+      <div className="flex items-center justify-between p-5 mb-2 border-b border-purple-900/30">
         <div className="flex items-center gap-3">
           <div className="bg-linear-to-br from-[#ff6b3d] to-[#9823ff] p-1.5 rounded-lg shadow-lg">
             <LayoutGrid size={18} className="text-white" />
@@ -42,19 +42,6 @@ export default function Sidebar() {
           <span className="font-bold text-sm tracking-widest text-white uppercase opacity-90">
             Controle de Relatorios
           </span>
-        </div>
-      </div>
-
-      <div className="px-4 mb-6">
-        <div className="relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-purple-300/50">
-            <Search size={16} />
-          </span>
-          <input
-            type="text"
-            className="w-full bg-[#2d1b4d]/50 text-sm text-white placeholder-purple-300/30 rounded-xl py-2.5 pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-[#9823ff] border border-purple-500/10 transition-all"
-            placeholder="Buscar unidade..."
-          />
         </div>
       </div>
 
@@ -70,8 +57,7 @@ export default function Sidebar() {
           {isBanksOpen ? <ChevronDown size={16} className="text-purple-500" /> : <ChevronRight size={16} className="text-purple-500" />}
         </button>
 
-        {/* LISTA DE BANCOS COM EFEITO HIDDEN/FLEX */}
-        <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isBanksOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isBanksOpen ? 'max-h-250 opacity-100' : 'max-h-0 opacity-0'}`}>
           {banks.map((bank) => (
             <Link
               href={`?bank=${bank.name}`}
@@ -87,7 +73,26 @@ export default function Sidebar() {
               <span className="text-sm font-medium">{bank.name}</span>
             </Link>
           ))}
+          <Link
+              href={`?bank=Adicionar Banco`}
+              onClick={() => setIsActivate('')}
+              key={1}
+              className={'ml-4 flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 group bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-lg'}
+            >
+              <span className="text-sm font-medium">ADICIONAR BANCO</span>
+            </Link>
         </div>
+
+        <Link
+          href={'?bank=Todos os Bancos'}
+          onClick={() => setIsActivate('')}
+          className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <Landmark size={18} className="text-purple-400" />
+            <span className="text-sm font-semibold tracking-wide">Todos os Bancos</span>
+          </div>
+        </Link>
       </nav>
     </div>
   );

@@ -1,9 +1,35 @@
-import { Report } from "../models/Report"
+import { where } from "sequelize"
+import { Bank } from "../models"
+import { Report } from "../models"
+
+interface ReportAtt {
+    id: number
+    filename: string
+    received: boolean
+    processed: boolean
+    processedAt: Date
+}
 
 class ReportRepository {
     async getAll() {
         try {
-            const reports = await Report.findAll()
+            const reports = await Report.findAll({ include: [{model: Bank, as: 'bank'}] })
+            return reports
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllByDate(dateOfReport: string) {
+        try {
+            const reports = await Report.findAll(
+                {
+                    include: [{model: Bank, as: 'bank'}],
+                    where: {
+                        dateOfReport
+                    }
+                },
+            )
             return reports
         } catch (error) {
             throw error
@@ -46,6 +72,24 @@ class ReportRepository {
             }
 
             const newReport = await Report.bulkCreate(reports)
+            return newReport
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async update({ id, filename, processed, processedAt, received }: ReportAtt) {
+        try {
+            const newReport = await Report.update({
+                filename,
+                processed,
+                processedAt,
+                received
+            }, {
+                where: {
+                    id: id
+                }
+            })
             return newReport
         } catch (error) {
             throw error

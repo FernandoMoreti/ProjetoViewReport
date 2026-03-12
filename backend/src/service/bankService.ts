@@ -19,6 +19,19 @@ class BankService {
         return newBank
     }
 
+    async update(banks: any[]) {
+        try {
+            for (let bank of banks) {
+                const { id, name } = bank
+                await BankRepository.update({ id, name })
+            }
+            return 200
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+    }
+
 }
 
 export default new BankService()

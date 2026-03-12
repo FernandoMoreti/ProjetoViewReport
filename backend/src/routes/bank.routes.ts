@@ -5,5 +5,6 @@ const route = Router()
 
 route.get("/", BankController.getAll)
 route.post("/", BankController.create)
+route.put("/", BankController.update)
 
 export default route

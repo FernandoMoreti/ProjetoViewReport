@@ -23,14 +23,23 @@ class BankController {
     }
 
     async create(req: Request, res: Response) {
-        const { bank } = req.body
+        const { banks } = req.body
 
-        if (!bank) {
+        console.log(banks)
+
+        if (!banks) {
             console.log("Nenhum Nome de banco foi enviado")
         }
 
-        const newBank = await BankService.create(bank)
+        const newBank = await BankService.create(banks)
         return res.status(200).json(newBank)
+    }
+
+    async update(req: Request, res: Response) {
+        const { banks } = req.body
+
+        const newReports = BankService.update(banks)
+        return res.status(200).json(newReports)
     }
 }
 

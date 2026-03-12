@@ -1,23 +1,28 @@
 'use client'
-import { useState } from "react";
-import { FileText, Calendar, Plus, Trash2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { FileText, Calendar, Loader } from 'lucide-react';
 import { generateLast30Days } from "../utils/utils";
 import axios from "axios";
 
 interface ReportAttributes {
+  id?: number
   dateOfReport: string;
   bankId: number;
   filename: string;
   received: boolean;
   processed: boolean;
   processedAt: string | null;
+  bank?: {
+    id: number
+    name: string
+  }
 }
 
-interface PropsAdd {
+interface PropsEdit {
     bank: string
 }
 
-export default function AddReport({ bank }: PropsAdd) {
+export default function EditReport({ bank }: PropsEdit) {
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [loading, setLoading] = useState(false);
@@ -26,22 +31,33 @@ export default function AddReport({ bank }: PropsAdd) {
 
   const last30Days = generateLast30Days();
 
-  const handleAddReport = () => {
-    const newRow: ReportAttributes = {
-      dateOfReport: selectedDate,
-      bankId: 0,
-      filename: '',
-      received: false,
-      processed: false,
-      processedAt: null,
-    };
-    setReports([...reports, newRow]);
-  };
+  useEffect(() => {
+    async function getReports() {
+      setReports([]);
+      try {
+        const body = {
+          bank,
+          date: selectedDate
+        }
+        const response = await axios.post("http://localhost:3003/reports/date", body)
 
-  const handleRemoveRow = (index: number) => {
-    const updated = reports.filter((_, i) => i !== index);
-    setReports(updated);
-  };
+        const data = response.data;
+
+        if (Array.isArray(data)) {
+          setReports(data);
+        } else if (data && typeof data === 'object') {
+          setReports([data]);
+        } else {
+          setReports([]);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar relatórios:", error);
+        setReports([])
+      }
+    }
+
+    getReports()
+  }, [selectedDate, bank])
 
   const updateField = (index: number, field: keyof ReportAttributes, value: string | number | boolean) => {
     const updated = [...reports];
@@ -56,7 +72,7 @@ export default function AddReport({ bank }: PropsAdd) {
     try {
       console.log(reports)
 
-      await axios.post("http://localhost:3003/reports", { bank, reports });
+      await axios.put("http://localhost:3003/reports", { reports });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");
@@ -65,7 +81,6 @@ export default function AddReport({ bank }: PropsAdd) {
       alert("Erro ao salvar.");
     } finally {
       setLoading(false);
-      setReports([])
     }
   };
 
@@ -90,9 +105,18 @@ export default function AddReport({ bank }: PropsAdd) {
             </select>
           </div>
           <button
-            className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
+            className="flex w-60 items-center justify-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
           >
-            Salvar Novos Relatorios
+            {
+              loading
+              ? (
+                  <>
+                    <Loader className="animate-spin"/>
+                    <p>Salvando...</p>
+                  </>
+                )
+              : "Salvar Alterações"
+            }
           </button>
         </div>
 
@@ -101,11 +125,16 @@ export default function AddReport({ bank }: PropsAdd) {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-purple-900/20 border-b border-purple-900/10">
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Id</th>
+                  {
+                    bank == 'Todos os Bancos'
+                    ? <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
+                    : <></>
+                  }
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data Relatório</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Nome do Relatório</th>
                   <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Status</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data de Proc.</th>
-                  <th className="px-4"></th>
                 </tr>
               </thead>
 
@@ -113,12 +142,30 @@ export default function AddReport({ bank }: PropsAdd) {
                 {reports.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-20 text-center text-purple-500/50 italic text-sm">
-                      Nenhum relatório adicionado. Clique no botão abaixo para começar.
+                      Nenhum relatório encontrado nessa data.
                     </td>
                   </tr>
                 ) : (
                   reports.map((report, index) => (
                     <tr key={index} className="animate-in fade-in duration-300">
+                      <td className="px-6 py-8">
+                        <div className="flex items-center justify-center gap-2 text-xs text-white">
+                          {report.id}
+                        </div>
+                      </td>
+
+                      {
+                        bank == 'Todos os Bancos'
+                        ?
+                          <td className="px-6 py-8">
+                            <div className="flex items-center justify-center gap-2 text-xs text-white">
+                              {report.bank!.name}
+                            </div>
+                          </td>
+                        : <></>
+                      }
+
+
                       <td className="px-6 py-8">
                         <div className="flex items-center justify-center gap-2 text-xs text-white">
                           <Calendar size={14} className="text-purple-500" />
@@ -166,20 +213,10 @@ export default function AddReport({ bank }: PropsAdd) {
                       <td className="px-6 py-8">
                         <input
                           type="date"
-                          value={report.processedAt || ""}
+                          value={report.processedAt ? report.processedAt.slice(0, 10) : ""}
                           onChange={(e) => updateField(index, 'processedAt', e.target.value)}
                           className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-xs text-white outline-none focus:border-[#9823ff]"
                         />
-                      </td>
-
-                      <td className="px-4">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveRow(index)}
-                          className="text-purple-500/30 hover:text-red-500 transition-colors"
-                        >
-                          <Trash2 size={18} />
-                        </button>
                       </td>
                     </tr>
                   ))
@@ -189,16 +226,6 @@ export default function AddReport({ bank }: PropsAdd) {
           </div>
         </div>
       </form>
-
-      <div className="flex justify-center mt-10">
-        <button
-          className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
-          onClick={handleAddReport}
-        >
-          <Plus size={20} />
-          ADICIONAR RELATÓRIO
-        </button>
-      </div>
     </section>
   );
 }

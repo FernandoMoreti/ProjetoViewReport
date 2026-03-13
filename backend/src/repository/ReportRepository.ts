@@ -39,25 +39,49 @@ class ReportRepository {
         }
     }
 
-        async getAllLast30Days() {
-            try {
+    async getAllLast30Days() {
+        try {
 
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-                return Report.findAll({
-                    where: {
-                        dateOfReport: {
-                            [Op.gte]: thirtyDaysAgo
-                        }
+            return Report.findAll({
+                include: [{model: Bank, as: 'bank'}],
+                where: {
+                    dateOfReport: {
+                        [Op.gte]: thirtyDaysAgo
                     },
-                    order: [['dateOfReport', 'DESC']]
-                })
-            } catch (error) {
-                console.error("Erro ao buscar relatórios dos últimos 30 dias:", error);
-                throw error;
-            }
+                    processed : false
+                },
+                order: [['dateOfReport', 'DESC']]
+            })
+        } catch (error) {
+            console.error("Erro ao buscar relatórios dos últimos 30 dias:", error);
+            throw error;
         }
+    }
+
+    async getAllLast30DaysByBank(bankId: number) {
+        try {
+
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            return Report.findAll({
+                include: [{model: Bank, as: 'bank'}],
+                where: {
+                    dateOfReport: {
+                        [Op.gte]: thirtyDaysAgo
+                    },
+                    bankId
+                },
+                order: [['dateOfReport', 'DESC']]
+            })
+        } catch (error) {
+            console.error("Erro ao buscar relatórios dos últimos 30 dias:", error);
+            throw error;
+        }
+    }
 
     async getReportsByDate(bankId: number, date: string) {
         try {

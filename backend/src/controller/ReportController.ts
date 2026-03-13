@@ -29,6 +29,28 @@ class ReportController {
         }
     }
 
+    async getAllLast30Days(req: Request, res: Response) {
+        try {
+            const reports = await ReportService.getAllLast30Days()
+            res.status(200).json(reports)
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+    }
+
+    async getAllLast30DaysByBank(req: Request, res: Response) {
+        const { bank } = req.body
+
+        try {
+            const reports = await ReportService.getAllLast30DaysByBank(bank)
+            res.status(200).json(reports)
+        } catch (error) {
+            console.error(error)
+            throw error
+        }
+    }
+
     async create(req: Request, res: Response) {
         const { bank, reports } = req.body
 

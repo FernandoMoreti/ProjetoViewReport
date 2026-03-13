@@ -33,6 +33,7 @@ export default function AddBank() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (banks.length === 0) return alert("Adicione ao menos um relatório.");
+    if (loading) return;
     setLoading(true);
     try {
 

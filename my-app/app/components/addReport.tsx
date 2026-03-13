@@ -1,6 +1,6 @@
 'use client'
 import { useState } from "react";
-import { FileText, Calendar, Plus, Trash2 } from 'lucide-react';
+import { FileText, Calendar, Plus, Trash2, Loader } from 'lucide-react';
 import { generateLast30Days } from "../utils/utils";
 import axios from "axios";
 
@@ -52,6 +52,7 @@ export default function AddReport({ bank }: PropsAdd) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (reports.length === 0) return alert("Adicione ao menos um relatório.");
+    if (loading) return;
     setLoading(true);
     try {
       console.log(reports)
@@ -204,7 +205,16 @@ export default function AddReport({ bank }: PropsAdd) {
           <button
             className="flex justify-center items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
           >
-            Salvar Novos Relatorios
+            {
+              loading
+              ? (
+                  <>
+                    <Loader className="animate-spin"/>
+                    <p>Salvando...</p>
+                  </>
+                )
+              : "Salvar Novos relatorios"
+            }
           </button>
         </div>
       </form>

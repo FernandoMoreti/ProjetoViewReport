@@ -38,6 +38,35 @@ class ReportService {
         }
     }
 
+    async getAllLast30Days() {
+        try {
+            const reports = await ReportRepository.getAllLast30Days()
+            return reports
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
+    }
+
+    async getAllLast30DaysByBank(bank: string) {
+        try {
+            const hasBank = await BankRepository.getIdByName(bank)
+
+            if (!hasBank) {
+                console.error("Banco invalido")
+                return 'error'
+            }
+
+            const bankId = hasBank.dataValues.id
+
+            const reports = await ReportRepository.getAllLast30DaysByBank(bankId)
+            return reports
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
+    }
+
     async create(bank: string, reports: any[]) {
 
         const hasBank = await BankRepository.getIdByName(bank)

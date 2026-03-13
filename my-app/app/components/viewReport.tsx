@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
 import { FileText, Calendar } from 'lucide-react';
-import { generateLast30Days } from "../utils/utils";
 import axios from "axios";
 
 interface ReportAttributes {
@@ -12,6 +11,10 @@ interface ReportAttributes {
   received: boolean;
   processed: boolean;
   processedAt: string | null;
+  bank: {
+    id: number
+    name: string
+  }
 }
 
 interface PropsEdit {
@@ -23,8 +26,6 @@ export default function ViewReport({ bank }: PropsEdit) {
 
   const [selectedDate, setSelectedDate] = useState(todayStr)
   const [reports, setReports] = useState<ReportAttributes[]>([]);
-
-  const last30Days = generateLast30Days();
 
   useEffect(() => {
     async function getReports() {
@@ -54,10 +55,40 @@ export default function ViewReport({ bank }: PropsEdit) {
     getReports()
   }, [selectedDate, bank])
 
+  const handle30Days = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setReports([]);
+
+    let response;
+    let data;
+    try {
+
+      if (bank == "Todos os Bancos") {
+        response = await axios.get("http://localhost:3003/reports/30date")
+        data = response.data;
+      } else {
+        response = await axios.post("http://localhost:3003/reports/30date", {bank})
+        data = response.data;
+      }
+
+      if (Array.isArray(data)) {
+        setReports(data);
+      } else if (data && typeof data === 'object') {
+        setReports([data]);
+      } else {
+        setReports([]);
+      }
+    } catch (error) {
+      console.log(error)
+      setReports([]);
+    }
+
+  }
+
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
       <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="pb-4 flex justify-between">
+        <div className="pb-4 flex gap-5">
           <div className="flex flex-col">
             <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
               Data de Referência
@@ -78,6 +109,14 @@ export default function ViewReport({ bank }: PropsEdit) {
               />
             </div>
           </div>
+          <div className="flex flex-col justify-end">
+            <button
+              onClick={handle30Days}
+              className="bg-[#1a0b2e] h-10 w-30 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+            >
+              Ultimos 30 dias
+            </button>
+          </div>
         </div>
 
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
@@ -86,6 +125,11 @@ export default function ViewReport({ bank }: PropsEdit) {
               <thead>
                 <tr className="bg-purple-900/20 border-b border-purple-900/10">
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Id</th>
+                  {
+                    bank == 'Todos os Bancos'
+                    ? <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
+                    : <></>
+                  }
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data Relatório</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Nome do Relatório</th>
                   <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Status</th>
@@ -108,6 +152,17 @@ export default function ViewReport({ bank }: PropsEdit) {
                           {report.id}
                         </div>
                       </td>
+
+                      {
+                        bank == 'Todos os Bancos'
+                        ?
+                          <td className="px-6 py-8">
+                            <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
+                              {report.bank.name}
+                            </div>
+                          </td>
+                        : <></>
+                      }
 
                       <td className="px-6 py-8">
                         <div className="flex justify-center gap-2 text-sm text-white">

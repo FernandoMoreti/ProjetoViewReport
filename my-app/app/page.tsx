@@ -15,6 +15,11 @@ export default function BankPage() {
 
   const [activeTab, setActiveTab] = useState<'add' | 'view' | 'edit'>('view');
 
+  const handleSuccess = () => {
+    setActiveTab('view');
+  };
+
+
   if (!bank) {
     return (
       <div className="flex w-full bg-[#1a0b2e] flex-col items-center justify-center h-full mx-auto text-center animate-in fade-in zoom-in duration-1000">
@@ -109,13 +114,20 @@ export default function BankPage() {
             {activeTab === 'view' && <HomeBank />}
             {activeTab === 'edit' && <EditBank />}
           </div>
+        ) : bank === 'Todos os Bancos' ? (
+          <div className="animate-in fade-in duration-500">
+            {activeTab === 'add' && handleSuccess()}
+            {activeTab === 'view' && <ViewReport bank={bank} />}
+            {activeTab === 'edit' && <EditReport bank={bank} />}
+          </div>
         ) : (
           <div className="animate-in fade-in duration-500">
             {activeTab === 'add' && <AddReport bank={bank} />}
             {activeTab === 'view' && <ViewReport bank={bank} />}
             {activeTab === 'edit' && <EditReport bank={bank} />}
           </div>
-        )}
+        )
+      }
       </main>
 
     </section>

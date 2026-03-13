@@ -66,9 +66,9 @@ export default function EditReport({ bank }: PropsEdit) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (reports.length === 0) return alert("Adicione ao menos um relatório.");
+    if (loading) return;
     setLoading(true);
     try {
-      console.log(reports)
 
       await axios.put("http://localhost:3003/reports", { reports });
 
@@ -79,14 +79,45 @@ export default function EditReport({ bank }: PropsEdit) {
       alert("Erro ao salvar.");
     } finally {
       setLoading(false);
+      handle30Days(e)
     }
   };
+
+  const handle30Days = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setReports([]);
+
+    let response;
+    let data;
+    try {
+
+      if (bank == "Todos os Bancos") {
+        response = await axios.get("http://localhost:3003/reports/30date")
+        data = response.data;
+      } else {
+        response = await axios.post("http://localhost:3003/reports/30date", {bank})
+        data = response.data;
+      }
+
+      if (Array.isArray(data)) {
+        setReports(data);
+      } else if (data && typeof data === 'object') {
+        setReports([data]);
+      } else {
+        setReports([]);
+      }
+    } catch (error) {
+      console.log(error)
+      setReports([]);
+    }
+
+  }
 
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
       <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
 
-        <div className="pb-4 flex justify-between">
+        <div className="pb-4 flex justify-start gap-5">
           <div className="flex flex-col">
             <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
               Data de Referência
@@ -106,6 +137,14 @@ export default function EditReport({ bank }: PropsEdit) {
                 className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
               />
             </div>
+          </div>
+          <div className="flex flex-col justify-end">
+            <button
+              onClick={handle30Days}
+              className="bg-[#1a0b2e] h-10 w-30 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+            >
+              Ultimos 30 dias
+            </button>
           </div>
         </div>
 

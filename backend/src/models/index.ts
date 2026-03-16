@@ -1,10 +1,11 @@
 import sequelize from '../config/db';
 import { Bank, initBank } from './Bank';
 import { initReport, Report } from './Report';
+import { initDay, Schedule } from './Schedules';
 
-// Inicializa todos os modelos
 initReport(sequelize);
 initBank(sequelize);
+initDay(sequelize);
 
 // Um bank tem varios reports
 Bank.hasMany(Report, {
@@ -18,5 +19,15 @@ Report.belongsTo(Bank, {
     as: 'bank'
 });
 
-export { sequelize, Bank, Report };
+Bank.hasMany(Schedule, {
+    foreignKey: 'bankId',
+    as: 'schedules'
+});
+
+Schedule.belongsTo(Bank, {
+    foreignKey: 'bankId',
+    as: 'bank'
+});
+
+export { sequelize, Bank, Report, Schedule };
 export default sequelize;

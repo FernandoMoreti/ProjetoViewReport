@@ -1,10 +1,38 @@
 import BankRepository from "../repository/BankRepository"
 import ReportRepository from "../repository/ReportRepository"
+import { getCurrentDayOfWeek } from "../utils/utils"
 
 class ReportService {
     async getAll() {
         try {
             const reports = await ReportRepository.getAll()
+            return reports
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllByIntervalDate(dateOfReport: string, dateFinal: string) {
+        try {
+            const reports = await ReportRepository.getAllByIntervalDate(dateOfReport, dateFinal)
+            return reports
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getReportsByIntervalDate(bank: string, date: string, dateFinal: string) {
+        try {
+
+            const hasBank = await BankRepository.getIdByName(bank)
+
+            if (!hasBank) {
+                console.error("Banco invalido")
+                return 'error'
+            }
+            const bankId = hasBank.dataValues.id
+
+            const reports = await ReportRepository.getReportsByIntervalDate(bankId, date, dateFinal)
             return reports
         } catch (error) {
             throw error
@@ -79,6 +107,7 @@ class ReportService {
 
         for (let report of reports) {
             report.bankId = bankId
+            report.dayOfWeek = getCurrentDayOfWeek()
         }
 
         const newReport = await ReportRepository.create(reports)

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import ReportService from '../service/ReportService';
-import { where } from 'sequelize';
 
 class ReportController {
     async getAll(req: Request, res: Response) {
@@ -14,10 +13,19 @@ class ReportController {
 
     async getReportsByDate(req: Request, res: Response) {
 
-        const { bank, date } = req.body;
+        const { bank, date, dateFinal } = req.body;
         let reports;
 
         try {
+
+            if (dateFinal) {
+                if (bank == 'Todos os Bancos') {
+                    reports = await ReportService.getAllByIntervalDate(date, dateFinal)
+                } else {
+                    reports = await ReportService.getReportsByIntervalDate(bank, date, dateFinal)
+                }
+                return res.status(200).json(reports)
+            }
             if (bank == 'Todos os Bancos') {
                 reports = await ReportService.getAllByDate(date)
             } else {

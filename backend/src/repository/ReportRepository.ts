@@ -39,6 +39,28 @@ class ReportRepository {
         }
     }
 
+    async getAllByIntervalDate(dateOfReport: string, dateFinal: string) {
+        try {
+            const reports = await Report.findAll(
+                {
+                    include: [{model: Bank, as: 'bank'}],
+                    where: {
+                        dateOfReport: {
+                            [Op.between]: [dateOfReport, dateFinal]
+                        }
+                    },
+                    order: [
+                        [{ model: Bank, as: 'bank' }, 'name', 'ASC'],
+                        ['dateOfReport', 'DESC']
+                    ]
+                },
+            )
+            return reports
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getAllLast30Days() {
         try {
 
@@ -80,6 +102,23 @@ class ReportRepository {
         } catch (error) {
             console.error("Erro ao buscar relatórios dos últimos 30 dias:", error);
             throw error;
+        }
+    }
+
+    async getReportsByIntervalDate(bankId: number, date: string, dateFinal: string) {
+        try {
+            const reports = await Report.findAll({
+                where: {
+                    bankId,
+                    dateOfReport: {
+                        [Op.between]: [date, dateFinal]
+                    }
+                },
+                order: [['dateOfReport', 'DESC']]
+            })
+            return reports
+        } catch (error) {
+            throw error
         }
     }
 

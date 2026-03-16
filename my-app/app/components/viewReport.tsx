@@ -24,7 +24,8 @@ interface PropsEdit {
 export default function ViewReport({ bank }: PropsEdit) {
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const [selectedDate, setSelectedDate] = useState(todayStr)
+  const [selectedDateInitial, setSelectedDateInitial] = useState(todayStr)
+  const [selectedDateFinal, setSelectedDateFinal] = useState(todayStr)
   const [reports, setReports] = useState<ReportAttributes[]>([]);
 
   useEffect(() => {
@@ -33,7 +34,8 @@ export default function ViewReport({ bank }: PropsEdit) {
       try {
         const body = {
           bank,
-          date: selectedDate
+          date: selectedDateInitial,
+          dateFinal: selectedDateFinal
         }
         const response = await axios.post("http://localhost:3003/reports/date", body)
 
@@ -53,7 +55,7 @@ export default function ViewReport({ bank }: PropsEdit) {
     }
 
     getReports()
-  }, [selectedDate, bank])
+  }, [selectedDateInitial, selectedDateFinal, bank])
 
   const handle30Days = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -89,26 +91,48 @@ export default function ViewReport({ bank }: PropsEdit) {
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
       <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="pb-4 flex gap-5">
-          <div className="flex flex-col">
-            <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
-              Data de Referência
-            </label>
+          <div className="flex gap-5">
+              <div>
+                <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
+                  Data de Inicio
+                </label>
 
-            <div className="relative group">
-              <Calendar
-                size={16}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
-              />
+                <div className="relative group">
+                  <Calendar
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
+                  />
 
-              <input
-                type="date"
-                id="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
-              />
+                  <input
+                    type="date"
+                    id="date-initial"
+                    value={selectedDateInitial}
+                    onChange={(e) => setSelectedDateInitial(e.target.value)}
+                    className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
+                  Data de Final
+                </label>
+
+                <div className="relative group">
+                  <Calendar
+                    size={16}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
+                  />
+
+                  <input
+                    type="date"
+                    id="date-final"
+                    value={selectedDateFinal}
+                    onChange={(e) => setSelectedDateFinal(e.target.value)}
+                    className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
+                  />
+                </div>
+              </div>
             </div>
-          </div>
           <div className="flex flex-col justify-end">
             <button
               onClick={handle30Days}
@@ -158,7 +182,7 @@ export default function ViewReport({ bank }: PropsEdit) {
                         ?
                           <td className="px-6 py-8">
                             <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
-                              {report.bank.name}
+                              {report.bank?.name}
                             </div>
                           </td>
                         : <></>

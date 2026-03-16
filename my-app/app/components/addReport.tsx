@@ -1,7 +1,6 @@
 'use client'
 import { useState } from "react";
 import { FileText, Calendar, Plus, Trash2, Loader } from 'lucide-react';
-import { generateLast30Days } from "../utils/utils";
 import axios from "axios";
 
 interface ReportAttributes {
@@ -23,8 +22,6 @@ export default function AddReport({ bank }: PropsAdd) {
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayStr)
   const [reports, setReports] = useState<ReportAttributes[]>([]);
-
-  const last30Days = generateLast30Days();
 
   const handleAddReport = () => {
     const newRow: ReportAttributes = {
@@ -71,12 +68,12 @@ export default function AddReport({ bank }: PropsAdd) {
   };
 
   return (
-    <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
+    <section className="flex flex-col bg-[#1a0b2e] min-h-full px-6 text-white">
       <form onSubmit={handleSubmit} className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
 
         <div className="pb-4 flex justify-between">
-          <div className="pb-4 flex justify-between">
-            <div className="flex flex-col">
+          <div className="pb-0 flex">
+            <div className="flex flex-col justify-end">
               <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
                 Data de Referência
               </label>

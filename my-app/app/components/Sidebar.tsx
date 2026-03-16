@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutGrid, ChevronDown, Landmark, ChevronRight } from 'lucide-react';
+import { LayoutGrid, ChevronDown, Landmark, ChevronRight, Calendar } from 'lucide-react';
 import axios from 'axios';
 
 interface Bank {
@@ -60,7 +60,7 @@ export default function Sidebar() {
         <div className={`space-y-1 overflow-hidden transition-all duration-300 ${isBanksOpen ? 'max-h-250 opacity-100' : 'max-h-0 opacity-0'}`}>
           {banks.map((bank) => (
             <Link
-              href={`?bank=${bank.name}`}
+              href={`/?bank=${bank.name}`}
               key={bank.id}
               className={`ml-4 flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 group ${
                 isActivate === bank.name
@@ -74,7 +74,7 @@ export default function Sidebar() {
             </Link>
           ))}
           <Link
-              href={`?bank=Adicionar Banco`}
+              href={`/?bank=Adicionar Banco`}
               onClick={() => setIsActivate('ADICIONAR BANCO')}
               key={1}
               className={`ml-4 flex items-center gap-3 p-2.5 rounded-xl transition-all duration-200 group ${
@@ -88,13 +88,24 @@ export default function Sidebar() {
         </div>
 
         <Link
-          href={'?bank=Todos os Bancos'}
+          href={'/?bank=Todos os Bancos'}
           onClick={() => setIsActivate('')}
           className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
         >
           <div className="flex items-center gap-3">
             <Landmark size={18} className="text-purple-400" />
             <span className="text-sm font-semibold tracking-wide">Todos os Bancos</span>
+          </div>
+        </Link>
+
+        <Link
+          href={'/dayofweek'}
+          onClick={() => setIsActivate('')}
+          className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <Calendar size={18} className="text-purple-400" />
+            <span className="text-sm font-semibold tracking-wide">Dias da Semana</span>
           </div>
         </Link>
       </nav>

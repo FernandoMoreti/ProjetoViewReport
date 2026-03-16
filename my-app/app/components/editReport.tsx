@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
 import { FileText, Calendar, Loader } from 'lucide-react';
-import { generateLast30Days } from "../utils/utils";
 import axios from "axios";
 
 interface ReportAttributes {

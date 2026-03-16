@@ -8,6 +8,7 @@ import AddBank from "./components/addBank";
 import EditBank from "./components/editBank";
 import { LayoutGrid, Plus, Search, FileText, ChevronLeft } from 'lucide-react'
 import HomeBank from "./components/homeBank";
+import Link from "next/link";
 
 export default function BankPage() {
   const searchParams = useSearchParams();
@@ -39,32 +40,16 @@ export default function BankPage() {
           Selecione uma unidade bancária na barra lateral para gerenciar os relatórios processados, adicionar novos extratos ou auditar o histórico.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full px-30 opacity-80">
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center gap-2">
+        <div className="flex gap-4 px-30 opacity-80">
+          <Link
+            href={"/dayofweek"}
+            className="p-4 cursor-pointer w-50 py-10 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center transition-all duration-300 gap-2 hover:-translate-y-0.5 hover:bg-white/10"
+          >
             <div className="w-8 h-8 rounded-lg bg-[#9823ff]/20 flex items-center justify-center">
               <Plus size={16} className="text-[#9823ff]" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-tighter text-purple-200">Adicionar</span>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#ff6b3d]/20 flex items-center justify-center">
-              <Search size={16} className="text-[#ff6b3d]" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-tighter text-purple-200">Visualizar</span>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-              <FileText size={16} className="text-blue-400" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-tighter text-purple-200">Relatórios</span>
-          </div>
-        </div>
-
-        <div className="mt-12 flex items-center gap-2 text-purple-500/40 animate-bounce">
-          <ChevronLeft size={20} />
-          <span className="text-xs font-medium uppercase tracking-widest">Escolha um banco para começar</span>
+            <span className="text-xs font-bold uppercase tracking-tighter text-purple-200">Dias da Semana</span>
+          </Link>
         </div>
       </div>
     );

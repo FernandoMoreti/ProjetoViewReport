@@ -18,6 +18,7 @@ export function initBank(sequelize: Sequelize) {
     name: { type: DataTypes.STRING, allowNull: false },
   }, {
     sequelize,
-    tableName: 'tb_bank'
+    tableName: 'tb_bank',
+    underscored: true
   });
 }

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, Clock, X, Plus, Trash2 } from 'lucide-react';
 import axios from 'axios';
+import Link from 'next/link';
 
 interface Bank {
   id: number;
@@ -131,7 +132,8 @@ export default function DayOfWeek() {
             <div className="bg-[#1e132f] rounded-2xl p-4 border border-gray-800 flex-1 flex flex-col gap-3">
                 {bankByDay
                     ?.filter((b) => b.dayOfWeek === item.day).map((bank, index) => (
-                    <div
+                    <Link
+                      href={`/?bank=${bank.bank?.name}`}
                       key={index}
                       className="flex items-center justify-between bg-[#1c1c1c] p-4 rounded-xl border border-gray-800 shadow-lg relative group overflow-hidden"
                     >
@@ -168,7 +170,7 @@ export default function DayOfWeek() {
                         </div>
 
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </div>
+                    </Link>
                     ))
                 }
 

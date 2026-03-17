@@ -138,12 +138,25 @@ export default function EditReport({ bank }: PropsEdit) {
             </div>
           </div>
           <div className="flex flex-col justify-end">
-            <button
-              onClick={handle30Days}
-              className="bg-[#1a0b2e] h-10 w-30 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
-            >
-              Ultimos 30 dias
-            </button>
+            {
+              bank == "Todos os Bancos"
+              ? (
+                <button
+                  onClick={handle30Days}
+                  className="bg-[#1a0b2e] h-10 w-40 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+                >
+                  Não Processados
+                </button>
+              )
+              : (
+                <button
+                  onClick={handle30Days}
+                  className="bg-[#1a0b2e] h-10 w-30 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+                >
+                  Ultimos 30 dias
+                </button>
+              )
+            }
           </div>
         </div>
 
@@ -186,7 +199,7 @@ export default function EditReport({ bank }: PropsEdit) {
                         ?
                           <td className="px-6 py-8">
                             <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
-                              {report.bank!.name}
+                              {report.bank?.name}
                             </div>
                           </td>
                         : <></>

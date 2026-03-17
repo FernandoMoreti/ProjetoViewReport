@@ -61,19 +61,12 @@ class ReportRepository {
         }
     }
 
-    async getAllLast30Days() {
+    async getAllNotProcessed() {
         try {
-
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
             return Report.findAll({
                 include: [{model: Bank, as: 'bank'}],
                 where: {
-                    dateOfReport: {
-                        [Op.gte]: thirtyDaysAgo
-                    },
-                    processed : false
+                    processed: false
                 },
                 order: [['dateOfReport', 'DESC']]
             })

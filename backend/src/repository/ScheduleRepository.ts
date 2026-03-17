@@ -15,56 +15,73 @@ interface ScheduleAtt {
 
 export class ScheduleRepository {
     async getAll() {
-  try {
-    const startOfWeek = new Date();
-    const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Ajusta para Segunda
-    startOfWeek.setDate(diff);
-    startOfWeek.setHours(0,0,0,0);
+        try {
+            const startOfLastWeek = new Date();
+            const day = startOfLastWeek.getDay();
+            const diff = startOfLastWeek.getDate() - day + (day === 0 ? -6 : 1) - 7; // -7 dias (Semana Passada)
+            startOfLastWeek.setDate(diff);
+            startOfLastWeek.setHours(0,0,0,0);
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 4); // Vai até Sexta
-    endOfWeek.setHours(23,59,59,999);
+            const endOfCurrentWeek = new Date();
+            const dayEnd = endOfCurrentWeek.getDay();
+            const diffEnd = endOfCurrentWeek.getDate() - dayEnd + (dayEnd === 0 ? 0 : 7); // Domingo da semana atual
+            endOfCurrentWeek.setDate(diffEnd);
+            endOfCurrentWeek.setHours(23,59,59,999);
 
-    const results = await Schedule.findAll({
-      include: [
-        {
-          model: Bank,
-          as: 'bank',
-          include: [
-            {
-              model: Report,
-              as: 'reports',
-              where: {
-                dateOfReport : {
-                  [Op.between]: [
-                    startOfWeek.toISOString().split('T')[0],
-                    endOfWeek.toISOString().split('T')[0]
-                  ]
+            const results = await Schedule.findAll({
+                include: [
+                    {
+                    model: Bank,
+                    as: 'bank',
+                    include: [
+                        {
+                        model: Report,
+                        as: 'reports',
+                        where: {
+                            dateOfReport : {
+                            [Op.between]: [
+                                startOfLastWeek.toISOString().split('T')[0],
+                                endOfCurrentWeek.toISOString().split('T')[0]
+                            ]
+                            }
+                        },
+                        required: false
+                        }
+                    ]
+                    }
+                ]
+            });
+
+            const hoje = new Date();
+            const diaDaSemanaAtual = hoje.getDay();
+            return results.map(s => {
+                const item = s.get({ plain: true }) as any;
+                if (item.bank?.reports) {
+                    item.bank.reports = item.bank.reports.filter((r: any) => {
+                        const diaBate = r.dayOfWeek === item.dayOfWeek;
+                        if (!diaBate) return false;
+
+                        if (item.dayOfWeek === 'Sexta' && diaDaSemanaAtual === 1) {
+                            return true;
+                        }
+
+                        const dataReport = new Date(r.dateOfReport);
+                        const inicioSemanaAtual = new Date();
+                        const d = inicioSemanaAtual.getDay();
+                        inicioSemanaAtual.setDate(inicioSemanaAtual.getDate() - d + (d === 0 ? -6 : 1));
+                        inicioSemanaAtual.setHours(0,0,0,0);
+
+                        return dataReport >= inicioSemanaAtual;
+                    });
                 }
-              },
-              required: false
-            }
-          ]
-        }
-      ]
-    });
+                return item;
+            });
 
-    return results.map(s => {
-        const item = s.get({ plain: true }) as any;
-        if (item.bank?.reports) {
-            item.bank.reports = item.bank.reports.filter(
-                (r: any) => r.dayOfWeek === item.dayOfWeek
-            );
+        } catch (error) {
+            console.error("Erro no repositório:", error);
+            throw error;
         }
-        return item;
-    });
-
-  } catch (error) {
-    console.error("Erro no repositório:", error);
-    throw error;
-  }
-}
+    }
 
     async create(bankId: number, dayOfWeek: string, time: string ) {
         try {

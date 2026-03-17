@@ -9,6 +9,6 @@ export const getCurrentDayOfWeek = (): string => {
     'Sábado'
   ];
 
-  const date = new Date().getDate();
+  const date = new Date().getDay();
   return days[date];
 };

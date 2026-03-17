@@ -37,9 +37,9 @@ class ReportController {
         }
     }
 
-    async getAllLast30Days(req: Request, res: Response) {
+    async getAllNotProcessed(req: Request, res: Response) {
         try {
-            const reports = await ReportService.getAllLast30Days()
+            const reports = await ReportService.getAllNotProcessed()
             res.status(200).json(reports)
         } catch (error) {
             console.error(error)

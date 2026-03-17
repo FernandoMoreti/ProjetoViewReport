@@ -66,9 +66,9 @@ class ReportService {
         }
     }
 
-    async getAllLast30Days() {
+    async getAllNotProcessed() {
         try {
-            const reports = await ReportRepository.getAllLast30Days()
+            const reports = await ReportRepository.getAllNotProcessed()
             return reports
         } catch (error) {
             console.log(error)
@@ -108,6 +108,7 @@ class ReportService {
         for (let report of reports) {
             report.bankId = bankId
             report.dayOfWeek = getCurrentDayOfWeek()
+            console.log(report)
         }
 
         const newReport = await ReportRepository.create(reports)

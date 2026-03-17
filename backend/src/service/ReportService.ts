@@ -103,12 +103,12 @@ class ReportService {
             console.error("Banco invalido")
             return 'error'
         }
+
         const bankId = hasBank.dataValues.id
 
         for (let report of reports) {
             report.bankId = bankId
-            report.dayOfWeek = getCurrentDayOfWeek()
-            console.log(report)
+            report.dayOfWeek = getCurrentDayOfWeek(report.dateOfReport)
         }
 
         const newReport = await ReportRepository.create(reports)

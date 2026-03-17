@@ -1,4 +1,4 @@
-export const getCurrentDayOfWeek = (): string => {
+export const getCurrentDayOfWeek = (dateOfReport: string): string => {
   const days = [
     'Domingo',
     'Segunda',
@@ -9,6 +9,6 @@ export const getCurrentDayOfWeek = (): string => {
     'Sábado'
   ];
 
-  const date = new Date().getDay();
+  const date = new Date(dateOfReport).getUTCDay();
   return days[date];
 };

@@ -1,16 +1,21 @@
 import { Sequelize } from 'sequelize';
-
-const env = process.env.NODE_ENV || 'development';
+import 'dotenv/config';
 
 const sequelize = new Sequelize(
-  "dbyo",
-  "root",
-  "root",
+  process.env.DB_NAME as string,
+  process.env.DB_USER as string,
+  process.env.DB_PASS as string,
   {
-    host: "localhost",
-    port: 5432,
-    dialect: "postgres",
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    dialect: 'postgres',
     logging: false,
+    dialectOptions: {
+      ssl: process.env.NODE_ENV === 'production' ? {
+        require: true,
+        rejectUnauthorized: false
+      } : false
+    }
   }
 );
 

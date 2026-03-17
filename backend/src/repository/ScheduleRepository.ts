@@ -65,13 +65,12 @@ export class ScheduleRepository {
                             return true;
                         }
 
-                        const dataReport = new Date(r.dateOfReport);
                         const inicioSemanaAtual = new Date();
                         const d = inicioSemanaAtual.getDay();
                         inicioSemanaAtual.setDate(inicioSemanaAtual.getDate() - d + (d === 0 ? -6 : 1));
                         inicioSemanaAtual.setHours(0,0,0,0);
 
-                        return dataReport >= inicioSemanaAtual;
+                        return true;
                     });
                 }
                 return item;

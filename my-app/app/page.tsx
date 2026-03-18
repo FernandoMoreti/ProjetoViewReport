@@ -6,9 +6,10 @@ import EditReport from "./components/editReport";
 import ViewReport from "./components/viewReport";
 import AddBank from "./components/addBank";
 import EditBank from "./components/editBank";
-import { LayoutGrid, Plus, Search, FileText, ChevronLeft } from 'lucide-react'
+import { LayoutGrid, Plus } from 'lucide-react'
 import HomeBank from "./components/homeBank";
 import Link from "next/link";
+import { TabButton } from "./components/ui/TabButton";
 
 export default function BankPage() {
   const searchParams = useSearchParams();
@@ -116,21 +117,5 @@ export default function BankPage() {
       </main>
 
     </section>
-  );
-}
-
-function TabButton({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`pb-2 text-sm font-bold uppercase tracking-widest transition-all relative ${
-        active ? 'text-[#9823ff]' : 'text-purple-400/40 hover:text-purple-300'
-      }`}
-    >
-      {label}
-      {active && (
-        <div className="absolute -bottom-4.25 left-0 w-full h-0.5 bg-[#9823ff] shadow-[0_0_10px_#9823ff]" />
-      )}
-    </button>
   );
 }

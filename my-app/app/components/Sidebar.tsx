@@ -1,13 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutGrid, ChevronDown, Landmark, ChevronRight, Calendar } from 'lucide-react';
+import { LayoutGrid, ChevronDown, Landmark, ChevronRight, Calendar, Ticket } from 'lucide-react';
 import axios from 'axios';
 
 interface Bank {
   id: string;
   name: string;
-  active: boolean;
 }
 
 
@@ -106,6 +105,17 @@ export default function Sidebar() {
           <div className="flex items-center gap-3">
             <Calendar size={18} className="text-purple-400" />
             <span className="text-sm font-semibold tracking-wide">Dias da Semana</span>
+          </div>
+        </Link>
+
+        <Link
+          href={'/ticket'}
+          onClick={() => setIsActivate('')}
+          className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <Ticket size={18} className="text-purple-400" />
+            <span className="text-sm font-semibold tracking-wide">Tickets</span>
           </div>
         </Link>
       </nav>

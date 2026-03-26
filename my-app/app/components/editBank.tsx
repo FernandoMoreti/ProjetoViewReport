@@ -19,7 +19,7 @@ export default function EditBank() {
     async function getBanks() {
       setBanks([]);
       try {
-        const response = await axios.get("http://localhost:30000/banks")
+        const response = await axios.get("http://192.168.1.90:30000/banks")
 
         const data = response.data;
 
@@ -52,7 +52,7 @@ export default function EditBank() {
     setLoading(true);
     try {
 
-      await axios.put("http://localhost:30000/banks", { banks });
+      await axios.put("http://192.168.1.90:30000/banks", { banks });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");

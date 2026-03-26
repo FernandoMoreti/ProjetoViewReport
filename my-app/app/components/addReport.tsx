@@ -54,7 +54,7 @@ export default function AddReport({ bank }: PropsAdd) {
     try {
       console.log(reports)
 
-      await axios.post("http://localhost:30000/reports", { bank, reports });
+      await axios.post("http://192.168.1.90:30000/reports", { bank, reports });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");

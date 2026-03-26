@@ -39,7 +39,7 @@ export default function AddBank() {
 
         console.log(banks)
 
-      await axios.post("http://localhost:30000/banks", { banks });
+      await axios.post("http://192.168.1.90:30000/banks", { banks });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Banco criado com sucesso!");

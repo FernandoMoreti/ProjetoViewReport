@@ -36,7 +36,7 @@ export default function ViewTicket() {
           date: selectedDateInitial,
           dateFinal: selectedDateFinal
         }
-        const response = await axios.post("http://localhost:30000/reports/date", body)
+        const response = await axios.post("http://192.168.1.90:30000/reports/date", body)
 
         const data = response.data;
 
@@ -65,10 +65,10 @@ export default function ViewTicket() {
     try {
 
       if (bank == "Todos os Bancos") {
-        response = await axios.get("http://localhost:30000/reports/30date")
+        response = await axios.get("http://192.168.1.90:30000/reports/30date")
         data = response.data;
       } else {
-        response = await axios.post("http://localhost:30000/reports/30date", {bank})
+        response = await axios.post("http://192.168.1.90:30000/reports/30date", {bank})
         data = response.data;
       }
 

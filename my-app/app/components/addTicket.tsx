@@ -60,7 +60,7 @@ export default function AddTicket() {
       console.log("Submitting reports: ", reports);
 
       // Removed the undefined 'bank' variable from the payload
-      await axios.post("http://localhost:30000/reports", { reports });
+      await axios.post("http://192.168.1.90:30000/reports", { reports });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");

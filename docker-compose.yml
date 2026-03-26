@@ -3,12 +3,14 @@ services:
     image: postgres:15
     container_name: bd_postgres
     restart: always
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+    # O env_file injeta as variáveis DENTRO do container para o seu código usar
     env_file:
       - ./backend/.env
+    environment:
+      # O formato ${VAR:-default} garante que o banco suba mesmo que o .env na raiz falhe
+      POSTGRES_DB: ${DB_NAME:-dbyo}
+      POSTGRES_USER: ${DB_USER:-root}
+      POSTGRES_PASSWORD: ${DB_PASS:-root}
     ports:
       - "30002:5432"
     networks:
@@ -25,6 +27,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
+      # Forçamos o host como 'bd' para o Sequelize encontrar o container do banco
       DB_HOST: bd
     depends_on:
       - bd

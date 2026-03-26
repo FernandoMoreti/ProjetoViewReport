@@ -57,8 +57,8 @@ export default function Sidebar() {
         </button>
 
         <div
-          className={`space-y-1 overflow-hidden transition-all duration-500 ease-in-out ${
-            isBanksOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`
+          className={`space-y-1 overflow-y-auto transition-all duration-500 ease-in-out ${
+            isBanksOpen ? 'max-h-1000 opacity-100' : 'max-h-0 opacity-0'}`
           }
         >
           {banks.map((bank) => (

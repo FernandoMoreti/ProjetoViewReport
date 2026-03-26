@@ -44,7 +44,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 space-y-1 custom-scrollbar">
+      <nav className="flex-1 overflow-y-auto px-3 space-y-1">
         <button
           onClick={() => setIsBanksOpen(!isBanksOpen)}
           className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
@@ -58,7 +58,7 @@ export default function Sidebar() {
 
         <div
           className={`space-y-1 overflow-y-auto transition-all duration-500 ease-in-out ${
-            isBanksOpen ? 'max-h-1000 opacity-100' : 'max-h-0 opacity-0'}`
+            isBanksOpen ? 'max-h-full opacity-100' : 'max-h-0 opacity-0'}`
           }
         >
           {banks.map((bank) => (

@@ -19,6 +19,28 @@
   }
 }
 
+/* Tamanho da barra */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Fundo da barra */
+::-webkit-scrollbar-track {
+  background: #1a0b2e;
+  border-radius: 10px;
+}
+
+/* A barra em si */
+::-webkit-scrollbar-thumb {
+  background: #f1f1f1f1;
+  border-radius: 10px;
+}
+
+/* Efeito ao passar o mouse */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

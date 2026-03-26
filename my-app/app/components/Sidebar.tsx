@@ -19,7 +19,7 @@ export default function Sidebar() {
   useEffect(() => {
     async function getBanks() {
       try {
-        const response = await axios.get('http://localhost:3003/banks')
+        const response = await axios.get('http://localhost:30000/banks')
         setBanks(response.data)
       } catch (error) {
         console.error(error)

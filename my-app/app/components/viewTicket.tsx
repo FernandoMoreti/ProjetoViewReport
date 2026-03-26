@@ -17,16 +17,15 @@ interface ReportAttributes {
   }
 }
 
-interface PropsEdit {
-    bank: string
-}
 
-export default function ViewReport({ bank }: PropsEdit) {
+export default function ViewTicket() {
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [selectedDateInitial, setSelectedDateInitial] = useState(todayStr)
   const [selectedDateFinal, setSelectedDateFinal] = useState(todayStr)
   const [reports, setReports] = useState<ReportAttributes[]>([]);
+
+  let bank = "sting"
 
   useEffect(() => {
     async function getReports() {

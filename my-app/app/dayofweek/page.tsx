@@ -37,7 +37,7 @@ export default function DayOfWeek() {
   useEffect(() => {
     async function fetchBank() {
       try {
-          const response = await axios.get('http://localhost:3003/banks')
+          const response = await axios.get('http://localhost:30000/banks')
 
           const banks = response.data
 
@@ -53,7 +53,7 @@ export default function DayOfWeek() {
 
   async function fetchBankByDay() {
     try {
-        const response = await axios.get('http://localhost:3003/dayOfWeek')
+        const response = await axios.get('http://localhost:30000/dayOfWeek')
 
         if(!response.data) {
           console.error("Erro ao buscar")
@@ -80,7 +80,7 @@ export default function DayOfWeek() {
   async function handleSave() {
     try {
 
-      await axios.post('http://localhost:3003/dayofweek', {
+      await axios.post('http://localhost:30000/dayofweek', {
         bankId: formData.bankId,
         dayOfWeek: selectedDay,
         time: formData.time
@@ -98,7 +98,7 @@ export default function DayOfWeek() {
   async function handleDelete(id: number) {
     if (confirm("Deseja realmente remover este agendamento?")) {
       try {
-        await axios.delete(`http://localhost:3003/dayofweek/${id}`);
+        await axios.delete(`http://localhost:30000/dayofweek/${id}`);
         fetchBankByDay();
       } catch (error) {
         alert("Erro ao excluir agendamento");

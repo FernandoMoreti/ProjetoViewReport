@@ -1,0 +1,48 @@
+services:
+  bd:
+    image: postgres:15
+    container_name: bd_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    env_file:
+      - ./backend/.env
+    ports:
+      - "30002:5432"
+    networks:
+      - rede-projeto
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: ./backend
+    container_name: api_node
+    restart: always
+    ports:
+      - "30000:3003"
+    env_file:
+      - ./backend/.env
+    environment:
+      DB_HOST: bd
+    depends_on:
+      - bd
+    networks:
+      - rede-projeto
+
+  app:
+    build: ./my-app
+    container_name: app_next
+    restart: always
+    ports:
+      - "30001:3000"
+    networks:
+      - rede-projeto
+
+networks:
+  rede-projeto:
+    driver: bridge
+
+volumes:
+  pgdata:

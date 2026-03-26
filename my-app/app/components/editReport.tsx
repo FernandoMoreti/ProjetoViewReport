@@ -36,7 +36,7 @@ export default function EditReport({ bank }: PropsEdit) {
           bank,
           date: selectedDate
         }
-        const response = await axios.post("http://localhost:3003/reports/date", body)
+        const response = await axios.post("http://localhost:30000/reports/date", body)
 
         const data = response.data;
 
@@ -69,7 +69,7 @@ export default function EditReport({ bank }: PropsEdit) {
     setLoading(true);
     try {
 
-      await axios.put("http://localhost:3003/reports", { reports });
+      await axios.put("http://localhost:30000/reports", { reports });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");
@@ -91,10 +91,10 @@ export default function EditReport({ bank }: PropsEdit) {
     try {
 
       if (bank == "Todos os Bancos") {
-        response = await axios.get("http://localhost:3003/reports/30date")
+        response = await axios.get("http://localhost:30000/reports/30date")
         data = response.data;
       } else {
-        response = await axios.post("http://localhost:3003/reports/30date", {bank})
+        response = await axios.post("http://localhost:30000/reports/30date", {bank})
         data = response.data;
       }
 

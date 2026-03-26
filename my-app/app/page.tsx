@@ -1,6 +1,6 @@
 'use client'
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react"; // Importamos o Suspense
 import AddReport from "./components/addReport";
 import EditReport from "./components/editReport";
 import ViewReport from "./components/viewReport";
@@ -11,21 +11,20 @@ import HomeBank from "./components/homeBank";
 import Link from "next/link";
 import { TabButton } from "./components/ui/TabButton";
 
-export default function BankPage() {
+// 1. Criamos um componente interno para gerenciar a lógica dos parâmetros
+function BankContent() {
   const searchParams = useSearchParams();
   const bank: string = searchParams.get('bank') || '';
-
   const [activeTab, setActiveTab] = useState<'add' | 'view' | 'edit'>('view');
 
   const handleSuccess = () => {
     setActiveTab('view');
+    return;
   };
-
 
   if (!bank) {
     return (
       <div className="flex w-full bg-[#1a0b2e] flex-col items-center justify-center h-full mx-auto text-center animate-in fade-in zoom-in duration-1000">
-
         <div className="relative mb-8">
           <div className="absolute inset-0 bg-[#9823ff] blur-[100px] opacity-20 rounded-full"></div>
           <div className="relative bg-[#1a0b2e] border border-purple-500/20 p-8 rounded-full shadow-2xl">
@@ -38,7 +37,7 @@ export default function BankPage() {
         </h2>
 
         <p className="text-purple-300/60 text-lg max-w-md mb-10 leading-relaxed">
-          Selecione uma unidade bancária na barra lateral para gerenciar os relatórios processados, adicionar novos extratos ou auditar o histórico.
+          Selecione uma unidade bancária na barra lateral para gerenciar os relatórios processados...
         </p>
 
         <div className="flex gap-4 px-30 opacity-80">
@@ -66,24 +65,20 @@ export default function BankPage() {
           </div>
 
           <nav className="flex gap-6">
-            {
-              bank != 'Todos os Bancos'
-              ? <TabButton
-                  label="Adicionar"
-                  active={activeTab === 'add'}
-                  onClick={() => setActiveTab('add')}
-                />
-              : <></>
-            }
-            {
-              bank != 'Adicionar Banco'
-              ? <TabButton
-                  label="Visualizar"
-                  active={activeTab === 'view'}
-                  onClick={() => setActiveTab('view')}
-                />
-              : <></>
-            }
+            {bank != 'Todos os Bancos' && (
+              <TabButton
+                label="Adicionar"
+                active={activeTab === 'add'}
+                onClick={() => setActiveTab('add')}
+              />
+            )}
+            {bank != 'Adicionar Banco' && (
+              <TabButton
+                label="Visualizar"
+                active={activeTab === 'view'}
+                onClick={() => setActiveTab('view')}
+              />
+            )}
             <TabButton
               label="Editar"
               active={activeTab === 'edit'}
@@ -94,28 +89,37 @@ export default function BankPage() {
       </div>
 
       <main className="flex-1">
-        {bank === 'Adicionar Banco' ? (
-          <div className="animate-in fade-in duration-500">
-            {activeTab === 'add' && <AddBank />}
-            {activeTab === 'view' && <HomeBank />}
-            {activeTab === 'edit' && <EditBank />}
-          </div>
-        ) : bank === 'Todos os Bancos' ? (
-          <div className="animate-in fade-in duration-500">
-            {activeTab === 'add' && handleSuccess()}
-            {activeTab === 'view' && <ViewReport bank={bank} />}
-            {activeTab === 'edit' && <EditReport bank={bank} />}
-          </div>
-        ) : (
-          <div className="animate-in fade-in duration-500">
-            {activeTab === 'add' && <AddReport bank={bank} />}
-            {activeTab === 'view' && <ViewReport bank={bank} />}
-            {activeTab === 'edit' && <EditReport bank={bank} />}
-          </div>
-        )
-      }
+        <div className="animate-in fade-in duration-500">
+          {bank === 'Adicionar Banco' ? (
+            <>
+              {activeTab === 'add' && <AddBank />}
+              {activeTab === 'view' && <HomeBank />}
+              {activeTab === 'edit' && <EditBank />}
+            </>
+          ) : bank === 'Todos os Bancos' ? (
+            <>
+              {activeTab === 'add' && (handleSuccess(), null)}
+              {activeTab === 'view' && <ViewReport bank={bank} />}
+              {activeTab === 'edit' && <EditReport bank={bank} />}
+            </>
+          ) : (
+            <>
+              {activeTab === 'add' && <AddReport bank={bank} />}
+              {activeTab === 'view' && <ViewReport bank={bank} />}
+              {activeTab === 'edit' && <EditReport bank={bank} />}
+            </>
+          )}
+        </div>
       </main>
-
     </section>
+  );
+}
+
+// 2. A página principal apenas envolve o conteúdo em um Suspense
+export default function BankPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#1a0b2e] flex items-center justify-center text-white">Carregando portal...</div>}>
+      <BankContent />
+    </Suspense>
   );
 }

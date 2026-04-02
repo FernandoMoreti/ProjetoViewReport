@@ -16,17 +16,23 @@ interface ScheduleAtt {
 export class ScheduleRepository {
     async getAll() {
         try {
-            const startOfLastWeek = new Date();
-            const day = startOfLastWeek.getDay();
-            const diff = startOfLastWeek.getDate() - day + (day === 0 ? -6 : 1) - 7; // -7 dias (Semana Passada)
-            startOfLastWeek.setDate(diff);
-            startOfLastWeek.setHours(0,0,0,0);
+            const hoje = new Date();
+            const diaDaSemana = hoje.getDay();
+            let dataInicioBusca = new Date(hoje);
 
-            const endOfCurrentWeek = new Date();
-            const dayEnd = endOfCurrentWeek.getDay();
-            const diffEnd = endOfCurrentWeek.getDate() - dayEnd + (dayEnd === 0 ? 0 : 7); // Domingo da semana atual
-            endOfCurrentWeek.setDate(diffEnd);
-            endOfCurrentWeek.setHours(23,59,59,999);
+            if (diaDaSemana === 1) {
+                dataInicioBusca.setDate(hoje.getDate() - 3);
+            } else if (diaDaSemana === 2) {
+                dataInicioBusca.setDate(hoje.getDate() - 1);
+            } else {
+                const diffParaSegunda = diaDaSemana === 0 ? -6 : 1 - diaDaSemana;
+                dataInicioBusca.setDate(hoje.getDate() + diffParaSegunda);
+            }
+
+            dataInicioBusca.setHours(0, 0, 0, 0);
+
+            const dataInicio = dataInicioBusca.toISOString().split('T')[0];
+            const dataFim = new Date().toISOString().split('T')[0]; // Até hoje
 
             const results = await Schedule.findAll({
                 include: [
@@ -39,10 +45,7 @@ export class ScheduleRepository {
                         as: 'reports',
                         where: {
                             dateOfReport : {
-                            [Op.between]: [
-                                startOfLastWeek.toISOString().split('T')[0],
-                                endOfCurrentWeek.toISOString().split('T')[0]
-                            ]
+                            [Op.between]: [dataInicio, dataFim]
                             }
                         },
                         required: false
@@ -52,29 +55,23 @@ export class ScheduleRepository {
                 ]
             });
 
-            const hoje = new Date();
-            const diaDaSemanaAtual = hoje.getDay();
             return results.map(s => {
-                const item = s.get({ plain: true }) as any;
-                if (item.bank?.reports) {
-                    item.bank.reports = item.bank.reports.filter((r: any) => {
-                        const diaBate = r.dayOfWeek === item.dayOfWeek;
-                        if (!diaBate) return false;
+            const item = s.get({ plain: true }) as any;
 
-                        if (item.dayOfWeek === 'Sexta' && diaDaSemanaAtual === 1) {
-                            return true;
-                        }
+            if (item.bank?.reports) {
+                item.bank.reports = item.bank.reports.filter((r: any) => {
+                    const diaBate = r.dayOfWeek === item.dayOfWeek;
+                    if (!diaBate) return false;
 
-                        const inicioSemanaAtual = new Date();
-                        const d = inicioSemanaAtual.getDay();
-                        inicioSemanaAtual.setDate(inicioSemanaAtual.getDate() - d + (d === 0 ? -6 : 1));
-                        inicioSemanaAtual.setHours(0,0,0,0);
-
+                    if (item.dayOfWeek === 'Sexta' && diaDaSemana === 1) {
                         return true;
-                    });
-                }
-                return item;
-            });
+                    }
+
+                    return true;
+                });
+            }
+            return item;
+        });
 
         } catch (error) {
             console.error("Erro no repositório:", error);

@@ -159,20 +159,25 @@ export default function DayOfWeek() {
                                 type="checkbox"
                                 readOnly
                                 checked={!!bank.bank?.reports?.[0]?.notreceived}
-                                className="accent-[#ffffff] w-5 h-5 cursor-default"
+                                className="accent-[#ff0000] w-5 h-5 cursor-default"
                             />
-                            <input
-                                type="checkbox"
-                                readOnly
-                                checked={!!bank.bank?.reports?.[0]?.received}
-                                className="accent-purple-500 w-5 h-5 cursor-default"
-                            />
-                            <input
-                                type="checkbox"
-                                readOnly
-                                checked={!!bank.bank?.reports?.[0]?.processed}
-                                className="accent-[#ff6b3d] w-5 h-5 cursor-default"
-                            />
+                            {!bank.bank?.reports?.[0]?.notreceived ? (
+                              <>
+                                <input
+                                  type="checkbox"
+                                  readOnly
+                                  checked={!!bank.bank?.reports?.[0]?.received}
+                                  className="accent-purple-500 w-5 h-5 cursor-default"
+                                />
+                                <input
+                                  type="checkbox"
+                                  readOnly
+                                  checked={!!bank.bank?.reports?.[0]?.processed}
+                                  className="accent-[#ff6b3d] w-5 h-5 cursor-default"
+                                />
+                              </>
+                            ) : <></>
+                          }
                         </div>
 
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />

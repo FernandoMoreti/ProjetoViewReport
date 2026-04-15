@@ -167,7 +167,7 @@ export default function AddReport({ bank }: PropsAdd) {
                               type="checkbox"
                               checked={report.notreceived || false}
                               onChange={(e) => updateField(index, 'notreceived', e.target.checked)}
-                              className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ffffff]"
+                              className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff0000]"
                             />
                           </label>
                           <label className="flex flex-col items-center gap-2 cursor-pointer">
@@ -196,7 +196,7 @@ export default function AddReport({ bank }: PropsAdd) {
                           type="date"
                           value={report.processedAt || ""}
                           onChange={(e) => updateField(index, 'processedAt', e.target.value)}
-                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff]"
+                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff] scheme-dark"
                         />
                       </td>
 

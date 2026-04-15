@@ -236,7 +236,7 @@ export default function EditReport({ bank }: PropsEdit) {
                               type="checkbox"
                               checked={report.notreceived || false}
                               onChange={(e) => updateField(index, 'notreceived', e.target.checked)}
-                              className="w-20 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ffffff]"
+                              className="w-20 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff0000]"
                             />
                           </label>
                           <label className="flex flex-col items-center gap-2 cursor-pointer">

@@ -8,7 +8,7 @@ import Link from 'next/link';
 interface Bank {
   id: number;
   name: string;
-  reports?: Array<{ received?: boolean; processed?: boolean }>;
+  reports?: Array<{ notreceived?: boolean, received?: boolean; processed?: boolean }>;
 }
 
 interface BankByDay {
@@ -129,13 +129,13 @@ export default function DayOfWeek() {
               <h2 className="text-lg font-semibold text-gray-300">{item.day}</h2>
             </div>
 
-            <div className="bg-[#1e132f] rounded-2xl p-4 border border-gray-800 flex-1 flex flex-col gap-3">
+            <div className="bg-[#1e132f] overflow-y-auto max-h-100 rounded-2xl p-4 border border-gray-800 flex-1 flex flex-col gap-3">
                 {bankByDay
                     ?.filter((b) => b.dayOfWeek === item.day).map((bank, index) => (
                     <Link
                       href={`/?bank=${bank.bank?.name}`}
                       key={index}
-                      className="flex items-center justify-between bg-[#1c1c1c] p-4 rounded-xl border border-gray-800 shadow-lg relative group overflow-hidden"
+                      className="flex items-center justify-between bg-[#1c1c1c] px-4 py-7 rounded-xl border border-gray-800 shadow-lg relative group overflow-hidden"
                     >
                         <div className="flex flex-col">
                         <span className="text-sm font-medium text-gray-200">
@@ -158,6 +158,12 @@ export default function DayOfWeek() {
                             <input
                                 type="checkbox"
                                 readOnly
+                                checked={!!bank.bank?.reports?.[0]?.notreceived}
+                                className="accent-[#ffffff] w-5 h-5 cursor-default"
+                            />
+                            <input
+                                type="checkbox"
+                                readOnly
                                 checked={!!bank.bank?.reports?.[0]?.received}
                                 className="accent-purple-500 w-5 h-5 cursor-default"
                             />
@@ -165,7 +171,7 @@ export default function DayOfWeek() {
                                 type="checkbox"
                                 readOnly
                                 checked={!!bank.bank?.reports?.[0]?.processed}
-                                className="accent-gray-500 w-5 h-5 cursor-default"
+                                className="accent-[#ff6b3d] w-5 h-5 cursor-default"
                             />
                         </div>
 

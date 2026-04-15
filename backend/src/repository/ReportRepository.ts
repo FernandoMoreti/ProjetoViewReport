@@ -66,7 +66,8 @@ class ReportRepository {
             return Report.findAll({
                 include: [{model: Bank, as: 'bank'}],
                 where: {
-                    processed: false
+                    processed: false,
+                    notreceived: false
                 },
                 order: [['dateOfReport', 'DESC']]
             })

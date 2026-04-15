@@ -8,6 +8,7 @@ interface ReportAttributes {
   dateOfReport: string;
   bankId: number;
   filename: string;
+  notreceived: boolean;
   received: boolean;
   processed: boolean;
   processedAt: string | null;
@@ -144,7 +145,7 @@ export default function ViewReport({ bank }: PropsEdit) {
         </div>
 
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
-          <div className="overflow-hidden rounded-[22px]">
+          <div className="overflow-x-auto rounded-[22px]">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-purple-900/20 border-b border-purple-900/10">
@@ -204,6 +205,15 @@ export default function ViewReport({ bank }: PropsEdit) {
 
                       <td className="px-4 py-8">
                         <div className="flex justify-center gap-6">
+                          <label className="flex flex-col items-center gap-2 cursor-pointer">
+                            <span className="text-[10px] font-bold text-purple-400/50 uppercase">Não Recebido</span>
+                            <input
+                              type="checkbox"
+                              readOnly
+                              checked={report.notreceived || false}
+                              className="w-20 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ffffff]"
+                            />
+                          </label>
                           <label className="flex flex-col items-center gap-2 cursor-pointer">
                             <span className="text-[10px] font-bold text-purple-400/50 uppercase">Recebido</span>
                             <input

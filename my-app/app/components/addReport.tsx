@@ -7,6 +7,7 @@ interface ReportAttributes {
   dateOfReport: string;
   bankId: number;
   filename: string;
+  notreceived: boolean;
   received: boolean;
   processed: boolean;
   processedAt: string | null;
@@ -28,6 +29,7 @@ export default function AddReport({ bank }: PropsAdd) {
       dateOfReport: selectedDate,
       bankId: 0,
       filename: '',
+      notreceived: false,
       received: false,
       processed: false,
       processedAt: null,
@@ -48,11 +50,18 @@ export default function AddReport({ bank }: PropsAdd) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    let report: ReportAttributes
+
+    for (report of reports) {
+      if (report.notreceived == true) {
+        report.filename = "Não Recebido"
+      }
+    }
+
     if (reports.length === 0) return alert("Adicione ao menos um relatório.");
     if (loading) return;
     setLoading(true);
     try {
-      console.log(reports)
 
       await axios.post("http://192.168.1.90:30000/reports", { bank, reports });
 
@@ -152,6 +161,15 @@ export default function AddReport({ bank }: PropsAdd) {
 
                       <td className="px-4 py-8">
                         <div className="flex items-center justify-center gap-6">
+                          <label className="flex flex-col items-center gap-2 cursor-pointer">
+                            <span className="text-[10px] font-bold text-purple-400/50 uppercase">Não recebido</span>
+                            <input
+                              type="checkbox"
+                              checked={report.notreceived || false}
+                              onChange={(e) => updateField(index, 'notreceived', e.target.checked)}
+                              className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ffffff]"
+                            />
+                          </label>
                           <label className="flex flex-col items-center gap-2 cursor-pointer">
                             <span className="text-[10px] font-bold text-purple-400/50 uppercase">Recebido</span>
                             <input

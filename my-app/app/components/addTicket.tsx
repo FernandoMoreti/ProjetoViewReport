@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { FileText, Calendar, Plus, Trash2, Loader, Ticket } from 'lucide-react';
 import axios from "axios";
-
-// Updated interface to match the actual fields used in the form
 interface TicketData {
   dateOfTicket: string;
   bank: string;
@@ -12,7 +10,7 @@ interface TicketData {
   closed: boolean;
 }
 
-// Sample banks array so the map function works
+
 const banks = [
   { id: 1, name: "Banco do Brasil" },
   { id: 2, name: "Itaú" },
@@ -31,7 +29,7 @@ export default function AddTicket() {
   const handleAddReport = () => {
     const newRow: TicketData = {
       dateOfTicket: selectedDate,
-      bank: banks[0].name, // Sets a default value from the banks array
+      bank: banks[0].name,
       reason: '',
       ticket: '',
       closed: false,
@@ -54,17 +52,16 @@ export default function AddTicket() {
     e.preventDefault();
     if (reports.length === 0) return alert("Adicione ao menos um relatório.");
     if (loading) return;
-    
+
     setLoading(true);
     try {
       console.log("Submitting reports: ", reports);
 
-      // Removed the undefined 'bank' variable from the payload
       await axios.post("http://192.168.1.90:30000/reports", { reports });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");
-      setReports([]); // Clear the form on success
+      setReports([]);
     } catch (error) {
       console.error(error);
       alert("Erro ao salvar.");
@@ -103,7 +100,7 @@ export default function AddTicket() {
           <div className="flex justify-center mt-10">
             <button
               type="button"
-              className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-gradient-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
+              className="flex items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold"
               onClick={handleAddReport}
             >
               <Plus size={20} />
@@ -219,7 +216,7 @@ export default function AddTicket() {
           <button
             type="submit"
             disabled={loading || reports.length === 0}
-            className="flex justify-center items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-gradient-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
+            className="flex justify-center items-center gap-3 p-4 px-10 rounded-xl transition-all duration-200 bg-linear-to-r from-[#9823ff] to-[#7022ff] text-white shadow-[0_4px_20px_rgba(152,35,255,0.3)] hover:-translate-y-1 font-bold disabled:opacity-50 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
           >
             {
               loading

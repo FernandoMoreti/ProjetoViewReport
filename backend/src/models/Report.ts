@@ -6,6 +6,7 @@ interface ReportAttributes {
   bankId: number;
   dateOfReport: string;
   dayOfWeek: string;
+  notreceived: boolean;
   received: boolean;
   processed: boolean;
   processedAt: Date | null;
@@ -19,6 +20,7 @@ export class Report extends Model<ReportAttributes, ReportCreationAttributes> im
   public bankId!: number;
   public dateOfReport!: string;
   public dayOfWeek!: string;
+  public notreceived!: boolean;
   public received!: boolean;
   public processed!: boolean;
   public processedAt!: Date | null;
@@ -34,6 +36,7 @@ export function initReport(sequelize: Sequelize) {
     }},
     dateOfReport: { type: DataTypes.DATEONLY, allowNull: false, unique: false },
     dayOfWeek: { type: DataTypes.STRING, allowNull: false, unique: false },
+    notreceived: { type: DataTypes.BOOLEAN, defaultValue: false },
     received: { type: DataTypes.BOOLEAN, defaultValue: false },
     processed: { type: DataTypes.BOOLEAN, defaultValue: false },
     processedAt: { type: DataTypes.DATE, allowNull: true },

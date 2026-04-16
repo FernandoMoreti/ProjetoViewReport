@@ -78,6 +78,15 @@ class ReportController {
         const newReports = ReportService.update(reports)
         return res.status(200).json(newReports)
     }
+
+    async validReport(req: Request, res: Response) {
+
+        const file = req.file
+
+        const data = ReportService.validReport(file!)
+
+        return data
+    }
 }
 
 export default new ReportController()

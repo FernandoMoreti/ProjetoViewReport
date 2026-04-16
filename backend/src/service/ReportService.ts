@@ -1,6 +1,9 @@
 import BankRepository from "../repository/BankRepository"
 import ReportRepository from "../repository/ReportRepository"
-import { getCurrentDayOfWeek } from "../utils/utils"
+import { getCurrentDayOfWeek, findBank } from "../utils/utils"
+import { read_excel } from '../utils/utils'
+import { PropReport } from "../Types/type"
+import { BANCOS_MAIS_LOJAS } from "../config/DePara/DePara"
 
 class ReportService {
     async getAll() {
@@ -125,6 +128,46 @@ class ReportService {
         } catch (error) {
             console.error(error)
             throw error
+        }
+    }
+
+    async validReport(file: Express.Multer.File) {
+        try {
+            const df = await read_excel(file.buffer) as PropReport[]
+
+            const grupos = Object.groupBy(df, (item: PropReport) => item.Banco as string);
+
+            const listaWork = grupos['WORKBANK']
+
+            for (let item of listaWork!) {
+                const nameBank = item.Arquivo.split("-")[0].trim()
+                const bank = findBank(nameBank)
+
+                const destino = bank || 'OUTROS';
+
+                if (!grupos[destino]) {
+                    grupos[destino] = [];
+                }
+
+                grupos[destino].push(item);
+            }
+
+            delete grupos['WORKBANK'];
+
+            for (let banco of BANCOS_MAIS_LOJAS) {
+                if (banco == "BMG") {
+                    for (let i of grupos["BMG"]!) {
+                        if (i.Arquivo.includes("53259")) {
+                            console.log(i.Arquivo)
+                        }
+                    }
+                }
+            }
+
+            return
+        } catch (e) {
+            console.error(e)
+            return
         }
     }
 }

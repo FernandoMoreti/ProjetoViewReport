@@ -37,8 +37,6 @@ export default function AddBank() {
     setLoading(true);
     try {
 
-        console.log(banks)
-
       await axios.post("http://192.168.1.90:30000/banks", { banks });
 
       await new Promise(resolve => setTimeout(resolve, 1500));

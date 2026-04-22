@@ -142,7 +142,6 @@ class ReportService {
             for (let item of listaWork!) {
                 const nameBank = item.Arquivo.split("-")[0].trim()
                 const bank = findBank(nameBank)
-
                 const destino = bank || 'OUTROS';
 
                 if (!grupos[destino]) {
@@ -152,9 +151,7 @@ class ReportService {
                 grupos[destino].push(item);
             }
 
-            delete grupos['WORKBANK'];
-
-
+            delete grupos["WORKBANK"]
 
             for (let banco of BANCOS_MAIS_LOJAS) {
                 if (banco === "BMG" && grupos["BMG"]) {
@@ -165,9 +162,10 @@ class ReportService {
                             "_CARTAO_BENEFICIO_ATO_E_DIFERIDO_CONSOLIDADO",
                             "_CONSIGNADO_ATO_E_DIFERIDO_CONSOLIDADO",
                             "_SAQUE_FGTS_ATO_E_DIFERIDO_CONSOLIDADO",
+                            "_ROTATIVO_CONSOLIDADO",
                             "_SEGURO_ATO_CONSOLIDADO",
-                            "_SaldoPagoCard",
-                            "SaldoPagoCartaoBeneficio"
+                            "_SALDOPAGOCARTAOBENEFICIO",
+                            "_SALDOPAGOCARD",
                         ];
 
                         const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
@@ -180,18 +178,28 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
                 if (banco === "C6 BANK" && grupos["C6 BANK"]) {
                     for (let i of grupos["C6 BANK"]!) {
+                        console.log(i.Arquivo)
                         const termos = [
                             "ANALÍTICO COMISSÃO FLAT (AUTOMÁTICO + MANUAL (C+D))",
-                            "ANALÍTICO KGIRO - EMITIDOS"
+                            "ANALÍTICO KGIRO",
+                            "C6 AUTO -COMISSÃO À VISTA - ANALÍTICO",
+                            "C6 AUTO ZERADO - COMISSÃO À VISTA - ANALÍTICO",
+                            "C6EQUITY"
                         ];
 
                         const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
-
                         if (termoEncontrado) {
                             const novaChave = `C6_${termoEncontrado}`;
 
@@ -200,27 +208,13 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
-                        }
-                    }
-                }
-                if (banco === "C6" && grupos["C6"]) {
-                    for (let i of grupos["C6"]!) {
-                        const termos = [
-                            "C6 AUTO -COMISSÃO À VISTA - ANALÍTICO",
-                            "C6 AUTO ZERADO - COMISSÃO À VISTA - ANALÍTICO",
-                            "C6EQUITY"
-                        ];
+                        } else {
 
-                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
-
-                        if (termoEncontrado) {
-                            const novaChave = `${termoEncontrado}`;
-
-                            if (!grupos[novaChave]) {
-                                grupos[novaChave] = [];
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
                             }
 
-                            grupos[novaChave].push(i);
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
@@ -246,11 +240,18 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
-                if (banco === "FACTA" && grupos["FACTA"]) {
-                    for (let i of grupos["FACTA"]!) {
+                if (banco === "FACTA FINANCEIRA" && grupos["FACTA FINANCEIRA"]) {
+                    for (let i of grupos["FACTA FINANCEIRA"]!) {
                         const termos = [
                             "WL",
                             "LEV"
@@ -266,10 +267,16 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
-                // VALIDAR COM A BIA
                 if (banco === "MERCANTIL" && grupos["MERCANTIL"]) {
                     for (let i of grupos["MERCANTIL"]!) {
                         const termos = [
@@ -277,7 +284,8 @@ class ReportService {
                             "BMB-DIARIO-COMISSAO-PARCELADO",
                             "MBF-DIARIO-COMISSAO-PARCELADO",
                             "BMB-SEMANAL-PRODUCAO",
-                            "BMB-DIARIO-COMISSAO-PARCELADO",
+                            "MBF-SEMANAL-PRODUCAO",
+                            "RELATORIO_TARIFA_-_LEV_INTERMEDIACAO"
                         ];
 
                         const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
@@ -290,6 +298,12 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
@@ -310,30 +324,60 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
-                // VALIDAR COM A YOLANDA
                 if (banco === "PAN" && grupos["PAN"]) {
                     for (let i of grupos["PAN"]!) {
                         const termos = [
                             "RELCOMISSAOCARTAO",
                             "RELCOMISSAO",
                             "DEMONSTRATIVO",
-                            "PAN LAFY",
-                            "",
                         ];
 
                         const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
 
                         if (termoEncontrado) {
-                            const novaChave = `PAN_${termoEncontrado}`;
 
-                            if (!grupos[novaChave]) {
-                                grupos[novaChave] = [];
+                            if (i.Arquivo.includes("903987")) {
+                                const novaChave = `PAN_3987_${termoEncontrado}`;
+
+                                if (!grupos[novaChave]) {
+                                    grupos[novaChave] = [];
+                                }
+
+                                grupos[novaChave].push(i);
+                            } else if (i.Arquivo.includes("004336")) {
+                                const novaChave = `PAN_4336_${termoEncontrado}`;
+
+                                if (!grupos[novaChave]) {
+                                    grupos[novaChave] = [];
+                                }
+
+                                grupos[novaChave].push(i);
+                            } else {
+                                const novaChave = `PAN_2907_${termoEncontrado}`;
+
+                                if (!grupos[novaChave]) {
+                                    grupos[novaChave] = [];
+                                }
+
+                                grupos[novaChave].push(i);
+                            }
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
                             }
 
-                            grupos[novaChave].push(i);
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
@@ -355,6 +399,13 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
@@ -364,7 +415,8 @@ class ReportService {
                             "CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
                             "GESTÃO CORBAN - DÉBITOS REALIZADOS",
                             "PLUS - CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
-                            "PLUS - GESTÃO CORBAN - DÉBITOS REALIZADOS"
+                            "PLUS - GESTÃO CORBAN - DÉBITOS REALIZADOS",
+                            "SAFRACOMISSAOZERO"
                         ];
 
                         const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
@@ -377,6 +429,13 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
@@ -397,6 +456,13 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }
@@ -417,6 +483,13 @@ class ReportService {
                             }
 
                             grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
                         }
                     }
                 }

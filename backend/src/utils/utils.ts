@@ -22,7 +22,7 @@ export const read_excel = async (buffer: Buffer) => {
   const firstSheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[firstSheetName];
 
-  const data = utils.sheet_to_json(worksheet, { range: 2 });
+  const data = utils.sheet_to_json(worksheet); // { range: 2 }
 
   return data;
 }
@@ -30,11 +30,15 @@ export const read_excel = async (buffer: Buffer) => {
 export function findBank(textoOriginal: string): string {
   if (!textoOriginal) return "";
 
-  const texto = textoOriginal.toUpperCase();
+  const texto = textoOriginal.toUpperCase().trim();
 
-  const bancoEncontrado = BANCOS_CONHECIDOS.find(banco => {
-    return texto.includes(banco.toUpperCase());
-  });
+  for (const [nomePadrao, variacoes] of Object.entries(BANCOS_CONHECIDOS)) {
+    const encontrou = variacoes.some(v => texto.includes(v.toUpperCase()));
 
-  return bancoEncontrado || "";
+    if (encontrou) {
+      return nomePadrao;
+    }
+  }
+
+  return "";
 }

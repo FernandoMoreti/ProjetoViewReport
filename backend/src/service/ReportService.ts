@@ -3,7 +3,7 @@ import ReportRepository from "../repository/ReportRepository"
 import { getCurrentDayOfWeek, findBank } from "../utils/utils"
 import { read_excel } from '../utils/utils'
 import { PropReport } from "../Types/type"
-import { BANCOS_MAIS_LOJAS } from "../config/DePara/DePara"
+import { BANCOS_MAIS_LOJAS, times_for_week } from "../config/DePara/DePara"
 
 class ReportService {
     async getAll() {
@@ -190,7 +190,6 @@ class ReportService {
                 }
                 if (banco === "C6 BANK" && grupos["C6 BANK"]) {
                     for (let i of grupos["C6 BANK"]!) {
-                        console.log(i.Arquivo)
                         const termos = [
                             "ANALÍTICO COMISSÃO FLAT (AUTOMÁTICO + MANUAL (C+D))",
                             "ANALÍTICO KGIRO",
@@ -412,10 +411,11 @@ class ReportService {
                 if (banco === "SAFRA" && grupos["SAFRA"]) {
                     for (let i of grupos["SAFRA"]!) {
                         const termos = [
-                            "CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
-                            "GESTÃO CORBAN - DÉBITOS REALIZADOS",
                             "PLUS - CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
                             "PLUS - GESTÃO CORBAN - DÉBITOS REALIZADOS",
+                            "PLUS - SAFRACOMISSAOZERO",
+                            "CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
+                            "GESTÃO CORBAN - DÉBITOS REALIZADOS",
                             "SAFRACOMISSAOZERO"
                         ];
 
@@ -493,11 +493,65 @@ class ReportService {
                         }
                     }
                 }
+                if (banco === "CREFAZ" && grupos["CREFAZ"]) {
+                    for (let i of grupos["CREFAZ"]!) {
+                        const termos = [
+                            "CLT CREFAZ",
+                            "CREFAZ",
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `CREFAZ_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
             }
 
-            console.log(Object.keys(grupos))
+            let listReportsBanks = []
 
-            return
+            for (let key of Object.keys(grupos)) {
+                let times = times_for_week[key as keyof typeof times_for_week] || 0;
+                if (times != 0) {
+                    const listaOriginal = grupos[key] || [];
+                    let itemArchive = {}
+
+                    const arquivosUnicos = new Set();
+                    const times_received = listaOriginal.filter(item => {
+                        itemArchive = item
+                        if (arquivosUnicos.has(item.Arquivo)) {
+                            return false;
+                        }
+                        arquivosUnicos.add(item.Arquivo);
+                        return true;
+                    }).length;
+
+                    let data = {
+                        "nameReport": key,
+                        "expectReceived": times,
+                        "timesReceived": times_received,
+                        "archive": itemArchive
+                    }
+
+                    listReportsBanks.push(data)
+                }
+            }
+
+            return listReportsBanks
         } catch (e) {
             console.error(e)
             return

@@ -75,7 +75,7 @@ class ReportController {
     async update(req: Request, res: Response) {
         const { reports } = req.body
 
-        const newReports = ReportService.update(reports)
+        const newReports = await ReportService.update(reports)
         return res.status(200).json(newReports)
     }
 
@@ -83,9 +83,9 @@ class ReportController {
 
         const file = req.file
 
-        const data = ReportService.validReport(file!)
+        const data = await ReportService.validReport(file!)
 
-        return data
+        return res.status(200).json(data)
     }
 }
 

@@ -22,7 +22,7 @@ export const read_excel = async (buffer: Buffer) => {
   const firstSheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[firstSheetName];
 
-  const data = utils.sheet_to_json(worksheet); // { range: 2 }
+  const data = utils.sheet_to_json(worksheet, { range: 2 }); // { range: 2 }
 
   return data;
 }

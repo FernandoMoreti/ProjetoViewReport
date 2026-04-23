@@ -127,6 +127,12 @@ class ReportService {
             throw error
         }
     }
+
+    async delete(id: any) {
+        await ReportRepository.delete(id)
+
+        return
+    }
 }
 
 export default new ReportService()

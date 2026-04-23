@@ -9,5 +9,6 @@ route.post("/30date", ReportController.getAllLast30DaysByBank)
 route.post("/", ReportController.create)
 route.post("/date", ReportController.getReportsByDate)
 route.put("/", ReportController.update)
+route.delete("/:id", ReportController.delete)
 
 export default route

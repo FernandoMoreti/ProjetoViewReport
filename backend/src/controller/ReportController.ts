@@ -78,6 +78,13 @@ class ReportController {
         const newReports = ReportService.update(reports)
         return res.status(200).json(newReports)
     }
+
+    async delete(req: Request, res: Response) {
+        const { id } = req.params
+
+        await ReportService.delete(id)
+        return res.status(200)
+    }
 }
 
 export default new ReportController()

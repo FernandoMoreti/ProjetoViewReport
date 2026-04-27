@@ -12,6 +12,7 @@ class ScheduleController {
     }
 
     async create(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Create Schedule")
         const { bankId, dayOfWeek, time  } = req.body
 
         if (!bankId) {
@@ -23,6 +24,7 @@ class ScheduleController {
     }
 
     async update(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Update Schedule")
         const { id, bankId, dayOfWeek, time } = req.body
 
         const newReports = ScheduleService.update(id, bankId, dayOfWeek, time)
@@ -30,6 +32,7 @@ class ScheduleController {
     }
 
     async delete(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Delete Schedule")
         const { id } = req.params
 
         await ScheduleService.delete(Number(id))

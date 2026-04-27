@@ -60,6 +60,7 @@ class ReportController {
     }
 
     async create(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Create Report")
         const { bank, reports } = req.body
 
         if (!bank) {
@@ -73,6 +74,7 @@ class ReportController {
     }
 
     async update(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Update Report")
         const { reports } = req.body
 
         const newReports = ReportService.update(reports)
@@ -80,6 +82,7 @@ class ReportController {
     }
 
     async delete(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Delete Report")
         const { id } = req.params
 
         await ReportService.delete(id)

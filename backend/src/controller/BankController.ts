@@ -23,6 +23,7 @@ class BankController {
     }
 
     async create(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Create Banco")
         const { banks } = req.body
 
         console.log(banks)
@@ -36,6 +37,7 @@ class BankController {
     }
 
     async update(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Update Banco")
         const { banks } = req.body
 
         const newReports = BankService.update(banks)

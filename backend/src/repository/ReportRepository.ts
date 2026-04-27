@@ -183,6 +183,8 @@ class ReportRepository {
                     id: id
                 }
             })
+
+            return ''
         } catch (error) {
             throw error
         }

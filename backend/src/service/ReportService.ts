@@ -129,9 +129,10 @@ class ReportService {
     }
 
     async delete(id: any) {
+
         await ReportRepository.delete(id)
 
-        return
+        return ''
     }
 }
 

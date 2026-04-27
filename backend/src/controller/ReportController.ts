@@ -83,7 +83,7 @@ class ReportController {
         const { id } = req.params
 
         await ReportService.delete(id)
-        return res.status(200)
+        return res.status(200).json({ message: "Excluido com sucesso "})
     }
 }
 

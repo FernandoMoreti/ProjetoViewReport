@@ -10,22 +10,25 @@ interface TicketData {
   resolved: boolean;
 }
 
+interface BankData {
+  id: number;
+  name: string;
+}
+
 export default function AddTicket() {
   const todayStr = new Date().toISOString().split('T')[0];
 
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(todayStr);
-  const [banks, setBanks] = useState([]);
+  const [banks, setBanks] = useState<BankData[]>([]);
   const [tickets, setTickets] = useState<TicketData[]>([]);
 
   useEffect(() => {
     async function fetchBanks() {
       try {
-        const response = await axios.get("http://localhost:3003/banks")
+        const response = await axios.get("http://192.168.1.90:30000/banks")
 
         const banks = response.data
-
-        console.log(banks)
 
         setBanks(banks)
       } catch(error) {
@@ -65,7 +68,8 @@ export default function AddTicket() {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:3003/tickets", tickets);
+      console.log(tickets)
+      await axios.post("http://192.168.1.90:30000/tickets", { tickets });
 
       await new Promise(resolve => setTimeout(resolve, 1500));
       alert("Dados salvos com sucesso!");

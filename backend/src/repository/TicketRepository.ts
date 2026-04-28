@@ -10,24 +10,40 @@ interface TicketAtt {
 }
 
 export class TicketRepository {
-    async getAll() {
+    async getNotResolved() {
         try {
-            return Ticket.findAll()
+            return Ticket.findAll({
+                where: {
+                    resolved: false
+                }
+            })
         } catch (error) {
             console.error("Erro no repositório:", error);
             throw error;
         }
     }
 
-    async create(bank: string, dateOfTicket: string, about: string, numTicket: string, resolved: boolean ) {
+    async getResolved() {
         try {
-            const newTicket = await Ticket.create({
-                bank,
-                dateOfTicket,
-                about,
-                numTicket,
-                resolved
+            return Ticket.findAll({
+                where: {
+                    resolved: true
+                }
             })
+        } catch (error) {
+            console.error("Erro no repositório:", error);
+            throw error;
+        }
+    }
+
+    async create(tickets: any[]) {
+        try {
+
+            if (!tickets || tickets.length === 0) {
+                throw new Error("Nenhum dado fornecido para inserção.");
+            }
+
+            const newTicket = await Ticket.bulkCreate(tickets)
             return newTicket
         } catch (error) {
             throw error

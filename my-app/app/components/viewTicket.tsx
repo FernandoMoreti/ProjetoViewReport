@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FileText, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import axios from "axios";
 
 interface TicketAttributes {
@@ -20,7 +20,7 @@ export default function ViewTicket() {
     async function getTickets() {
       setTickets([]);
       try {
-        const response = await axios.get("http://localhost:3003/tickets")
+        const response = await axios.get("http://192.168.1.90:30000/tickets")
 
         console.log(response.data)
 
@@ -42,9 +42,52 @@ export default function ViewTicket() {
     getTickets()
   }, [])
 
+  const handleResolved = async (type: string) => {
+    setTickets([]);
+    try {
+      let response
+      if (type == "resolved") {
+        response = await axios.get("http://192.168.1.90:30000/tickets/resolved")
+      } else {
+        response = await axios.get("http://192.168.1.90:30000/tickets")
+      }
+
+      const data = response.data;
+
+      if (Array.isArray(data)) {
+        setTickets(data);
+      } else if (data && typeof data === 'object') {
+        setTickets([data]);
+      } else {
+        setTickets([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar relatórios:", error);
+      setTickets([])
+    }
+  }
+
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
       <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="pb-4 flex justify-start gap-5">
+          <div className="flex flex-col justify-end">
+            <button
+              onClick={() => handleResolved("Notresolved")}
+              className="bg-[#1a0b2e] h-10 w-40 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+            >
+              Não Finalizados
+            </button>
+          </div>
+          <div className="flex flex-col justify-end">
+            <button
+              onClick={() => handleResolved("resolved")}
+              className="bg-[#1a0b2e] h-10 w-40 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+            >
+              Finalizados
+            </button>
+          </div>
+        </div>
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
           <div className="overflow-hidden rounded-[22px]">
             <table className="w-full text-left border-collapse">

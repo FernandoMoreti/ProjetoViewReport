@@ -1,9 +1,9 @@
 'use client'
 import { useState } from "react";
 import { TabButton } from "../components/ui/TabButton";
-import EditBank from "../components/editBank";
 import ViewTicket from "../components/viewTicket";
 import AddTicket from "../components/addTicket";
+import EditTicket from "../components/editTicket";
 
 export default function Ticket() {
   const [activeTab, setActiveTab] = useState<'add' | 'view' | 'edit'>('view');
@@ -41,7 +41,7 @@ export default function Ticket() {
         <div className="animate-in fade-in duration-500">
             {activeTab === 'add' && <AddTicket />}
             {activeTab === 'view' && <ViewTicket />}
-            {activeTab === 'edit' && <EditBank />}
+            {activeTab === 'edit' && <EditTicket />}
         </div>
       </main>
     </section>

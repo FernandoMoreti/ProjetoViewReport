@@ -1,23 +1,35 @@
 import TicketRepository from "../repository/TicketRepository"
 
 class TicketService {
-    async getAll() {
+    async getNotResolved() {
         try {
-            const banks = await TicketRepository.getAll()
+            const banks = await TicketRepository.getNotResolved()
             return banks
         } catch (error) {
             throw error
         }
     }
 
-    async create(bank: string, dateOfTicket: string, about: string, numTicket: string, resolved: boolean) {
-        const newBank = await TicketRepository.create(bank, dateOfTicket, about, numTicket, resolved)
+    async getResolved() {
+        try {
+            const banks = await TicketRepository.getResolved()
+            return banks
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async create(tickets: any[]) {
+        const newBank = await TicketRepository.create(tickets)
         return newBank
     }
 
-    async update(id: number, bank: string, dateOfTicket: string, about: string, numTicket: string, resolved: boolean) {
+    async update(tickets: any[]) {
         try {
-            await TicketRepository.update({ id, bank, dateOfTicket, about, numTicket, resolved})
+            for (let ticket of tickets) {
+                const { id, bank, dateOfTicket, about, numTicket, resolved } = ticket
+                await TicketRepository.update({ id, bank, dateOfTicket, about, numTicket, resolved })
+            }
             return 200
         } catch (error) {
             console.error(error)

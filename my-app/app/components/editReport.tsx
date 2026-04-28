@@ -84,27 +84,27 @@ export default function EditReport({ bank }: PropsEdit) {
   };
 
   const handleDelete = async (id: number | undefined, e: React.MouseEvent) => {
-  e.preventDefault();
-  if (!id) return;
+    e.preventDefault();
+    if (!id) return;
 
-  const confirmDelete = confirm("Tem certeza que deseja excluir este relatório?");
-  if (!confirmDelete || loading) return;
+    const confirmDelete = confirm("Tem certeza que deseja excluir este relatório?");
+    if (!confirmDelete || loading) return;
 
-  setLoading(true);
-  try {
-    console.log("Excluindo")
-    await axios.delete(`http://192.168.1.90:30000/reports/${id}`);
+    setLoading(true);
+    try {
+      console.log("Excluindo")
+      await axios.delete(`http://192.168.1.90:30000/reports/${id}`);
 
-    alert("Relatório excluído com sucesso!");
+      alert("Relatório excluído com sucesso!");
 
-    setReports(reports.filter(report => report.id !== id));
-  } catch (error) {
-    console.error(error);
-    alert("Erro ao excluir o relatório.");
-  } finally {
-    setLoading(false);
-  }
-};
+      setReports(reports.filter(report => report.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao excluir o relatório.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handle30Days = async (e: React.FormEvent) => {
     e.preventDefault()

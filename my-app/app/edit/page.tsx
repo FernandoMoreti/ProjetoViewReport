@@ -3,6 +3,17 @@
 import React, { useState } from 'react'
 import logo from "../../public/logo.jpg"
 import Image from 'next/image';
+import axios from 'axios';
+
+interface ReportAttributes {
+  dateOfReport: string;
+  bankId: number;
+  filename: string;
+  notreceived: boolean;
+  received: boolean;
+  processed: boolean;
+  processedAt: string | null;
+}
 
 function App() {
 
@@ -12,6 +23,7 @@ function App() {
   const [validar, setValidar] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [mensagem, setMensagem] = useState(false)
+  const [reports, setReports] = useState<ReportAttributes[]>([]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -34,7 +46,6 @@ function App() {
       })
 
       if (response.ok){
-        console.log("Deu tudo certo")
         const disposition = response.headers.get("content-disposition");
         const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
         const matches = filenameRegex.exec(disposition!);
@@ -58,6 +69,30 @@ function App() {
       } else {
         setValidar(false)
       }
+      let report: ReportAttributes
+
+      for (report of reports) {
+      if (report.notreceived == true) {
+          report.filename = "Não Recebido"
+      }
+      }
+
+      if (reports.length === 0) return alert("Adicione ao menos um relatório.");
+      if (loading) return;
+      setLoading(true);
+      try {
+
+      await axios.post("http://192.168.1.90:30000/reports", { bank, reports });
+
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      alert("Dados salvos com sucesso!");
+      } catch (error) {
+      console.error(error);
+      alert("Erro ao salvar.");
+      } finally {
+      setLoading(false);
+      setReports()
+    };
     } catch(error) {
       console.log("Erro ao enviar:", error)
       setValidar(false)
@@ -117,7 +152,8 @@ function App() {
     "OLE_FVE",
     "TotalCash",
     "V8",
-    "VCtex",
+    "VCtexNOVA",
+    "VCtexWL",
     "Viacerta",
     "WebCash"
    ]

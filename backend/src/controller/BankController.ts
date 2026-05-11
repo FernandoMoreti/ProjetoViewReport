@@ -12,21 +12,19 @@ class BankController {
     }
 
     async getByName(req: Request, res: Response) {
-        const { bank } = req.query || ""
+        const { bank } = req.body || ""
 
         if (!bank) {
             console.log("nenhum banco foi enviado")
         }
 
         const banks = await BankService.getByName(bank)
-        return banks
+        return res.status(200).json(banks)
     }
 
     async create(req: Request, res: Response) {
         console.log("ROTAS: Entrei no método Create Banco")
         const { banks } = req.body
-
-        console.log(banks)
 
         if (!banks) {
             console.log("Nenhum Nome de banco foi enviado")

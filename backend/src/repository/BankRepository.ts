@@ -20,7 +20,7 @@ export class BankRepository {
 
     async getByName(bank: string) {
         try {
-            return await Bank.findAll({
+            return await Bank.findOne({
                 where: {name: bank}
             })
         } catch (error) {

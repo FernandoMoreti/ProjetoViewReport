@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import logo from "../../public/logo.jpg"
 import Image from 'next/image';
 import axios from 'axios';
+import { findBank } from '../utils/utils'
 
 interface ReportAttributes {
   dateOfReport: string;
@@ -23,7 +24,7 @@ function App() {
   const [validar, setValidar] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [mensagem, setMensagem] = useState(false)
-  const [reports, setReports] = useState<ReportAttributes[]>([]);
+  const [date, setDate] = useState("")
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -40,7 +41,7 @@ function App() {
     }
 
     try {
-      const response = await fetch("https://flask-backend-ipg8.onrender.com/execute", {
+      const response = await fetch("http://127.0.0.1:5000/execute", {
         method: "POST",
         body: formData,
       })
@@ -51,7 +52,6 @@ function App() {
         const matches = filenameRegex.exec(disposition!);
         let filename = "arquivo.xlsx";
 
-        console.log(disposition)
         if (matches != null && matches[1]) {
           filename = matches[1].replace(/['"]/g, '');
           filename = decodeURIComponent(filename);
@@ -65,34 +65,36 @@ function App() {
         document.body.appendChild(a);
         a.click();
         a.remove();
+
+        const bankId = await findBank(banco)
+
+        console.log(bankId)
+
+        // let report: ReportAttributes = {
+        //   dateOfReport: date,
+        //   bankId: banco
+        // }
+
+        // if (!report) return alert("Adicione ao menos um relatório.");
+
+
         setValidar(true)
       } else {
         setValidar(false)
       }
-      let report: ReportAttributes
+      // try {
 
-      for (report of reports) {
-      if (report.notreceived == true) {
-          report.filename = "Não Recebido"
-      }
-      }
+      //   await axios.post("http://192.168.1.90:30000/reports", { banco, reports });
 
-      if (reports.length === 0) return alert("Adicione ao menos um relatório.");
-      if (loading) return;
-      setLoading(true);
-      try {
-
-      await axios.post("http://192.168.1.90:30000/reports", { bank, reports });
-
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert("Dados salvos com sucesso!");
-      } catch (error) {
-      console.error(error);
-      alert("Erro ao salvar.");
-      } finally {
-      setLoading(false);
-      setReports()
-    };
+      //   await new Promise(resolve => setTimeout(resolve, 1500));
+      //   alert("Dados salvos com sucesso!");
+      // } catch (error) {
+      //   console.error(error);
+      //   alert("Erro ao salvar.");
+      // } finally {
+      //   setLoading(false);
+      //   setReports([])
+      // };
     } catch(error) {
       console.log("Erro ao enviar:", error)
       setValidar(false)
@@ -178,7 +180,7 @@ function App() {
                 <div>
                   <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Importe o relatório:</p>
                   <input
-                    className="w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-sm text-gray-300 shadow-inner cursor-pointer focus:border-purple-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-900/30 file:text-purple-400 hover:file:bg-purple-900/50" 
+                    className="w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-sm text-gray-300 shadow-inner cursor-pointer focus:border-purple-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-900/30 file:text-purple-400 hover:file:bg-purple-900/50"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => e.target.files && setFile(e.target.files[0])}
                     type="file"
                   />
@@ -197,6 +199,15 @@ function App() {
                         <option key={banco} value={banco} className="bg-[#1e132f]">{banco}</option>
                       ))}
                   </select>
+                </div>
+
+                <div>
+                  <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Escolha o banco:</p>
+                  <input
+                    className="w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-sm text-gray-300 shadow-inner cursor-pointer focus:border-purple-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-900/30 file:text-purple-400 hover:file:bg-purple-900/50"
+                    onChange={(e) => setDate(e.target.value)}
+                    type="date"
+                  />
                 </div>
 
                 <button

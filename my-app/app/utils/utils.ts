@@ -1,3 +1,5 @@
+import axios from "axios"
+
 export function generateLast30Days() {
   const dates = [];
   for (let i = 0; i < 30; i++) {
@@ -69,6 +71,16 @@ const map: Record<string, string> = {
   "WebCash": "WEBCASH",
 }
 
-export function findBank(bank: string): string {
-  return map[bank] ?? "Banco não localizado";
+export async function findBank(bank: string): Promise<string> {
+
+  try {
+    const getBank: string = map[bank] ?? "Banco não localizado";
+    const response = await axios.post('http://localhost:3003/banks/findBankByName', { bank: getBank })
+    console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.error(error)
+    return "error"
+  }
+
 }

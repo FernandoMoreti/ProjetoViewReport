@@ -1,5 +1,3 @@
-import axios from "axios"
-
 export function generateLast30Days() {
   const dates = [];
   for (let i = 0; i < 30; i++) {
@@ -75,12 +73,16 @@ export async function findBank(bank: string): Promise<string> {
 
   try {
     const getBank: string = map[bank] ?? "Banco não localizado";
-    const response = await axios.post('http://localhost:3003/banks/findBankByName', { bank: getBank })
-    console.log(response.data)
-    return response.data
+    return getBank
   } catch (error) {
     console.error(error)
     return "error"
   }
 
+}
+
+export function extractFilename(disposition: string | null) {
+  if (!disposition) return null;
+  const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+  return matches && matches[1] ? decodeURIComponent(matches[1].replace(/['"]/g, '')) : null;
 }

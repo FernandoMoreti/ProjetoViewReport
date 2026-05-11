@@ -68,7 +68,6 @@ class ReportController {
             return 'erro'
         }
 
-
         const newReports = await ReportService.create(bank, reports)
         return res.status(200).json(newReports)
     }

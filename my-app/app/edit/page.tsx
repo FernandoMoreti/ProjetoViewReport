@@ -4,11 +4,11 @@ import React, { useState } from 'react'
 import logo from "../../public/logo.jpg"
 import Image from 'next/image';
 import axios from 'axios';
-import { findBank } from '../utils/utils'
+import { findBank, extractFilename } from '../utils/utils'
 
 interface ReportAttributes {
   dateOfReport: string;
-  bankId: number;
+  bankId: string;
   filename: string;
   notreceived: boolean;
   received: boolean;
@@ -18,85 +18,75 @@ interface ReportAttributes {
 
 function App() {
 
+  const todayStr = new Date().toISOString().split('T')[0];
+
   const [file, setFile] = useState<File | null>(null)
   const [banco, setBanco] = useState("")
   const [loading, setLoading] = useState(false)
   const [validar, setValidar] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [mensagem, setMensagem] = useState(false)
-  const [date, setDate] = useState("")
+  const [date, setDate] = useState(todayStr)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
+    if (!file || !banco) {
+      setMensagem(true)
+      return
+    }
 
     setLoading(true)
 
     const formData = new FormData();
     formData.append("banco", banco)
-    formData.append("arquivo", file!)
+    formData.append("arquivo", file)
 
-    if (!file || banco == "") {
-      setMensagem(true)
-      return
-    }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/execute", {
+      const response = await fetch("https://flask-backend-ipg8.onrender.com/execute", {
         method: "POST",
         body: formData,
       })
 
-      if (response.ok){
-        const disposition = response.headers.get("content-disposition");
-        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-        const matches = filenameRegex.exec(disposition!);
-        let filename = "arquivo.xlsx";
+      if (!response.ok) throw new Error("Erro no processamento do arquivo");
 
-        if (matches != null && matches[1]) {
-          filename = matches[1].replace(/['"]/g, '');
-          filename = decodeURIComponent(filename);
-        }
+      const [blob, bank] = await Promise.all([
+        response.blob(),
+        findBank(banco)
+      ]);
 
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        const bankId = await findBank(banco)
-
-        console.log(bankId)
-
-        // let report: ReportAttributes = {
-        //   dateOfReport: date,
-        //   bankId: banco
-        // }
-
-        // if (!report) return alert("Adicione ao menos um relatório.");
-
-
-        setValidar(true)
-      } else {
-        setValidar(false)
+      if (bank == "Banco não localizado") {
+        throw new Error(`Banco '${banco}' não esta mapeado no sistema.`);
       }
-      // try {
 
-      //   await axios.post("http://192.168.1.90:30000/reports", { banco, reports });
+      const disposition = response.headers.get("content-disposition");
+      const filename = extractFilename(disposition) || "arquivo.xlsx";
 
-      //   await new Promise(resolve => setTimeout(resolve, 1500));
-      //   alert("Dados salvos com sucesso!");
-      // } catch (error) {
-      //   console.error(error);
-      //   alert("Erro ao salvar.");
-      // } finally {
-      //   setLoading(false);
-      //   setReports([])
-      // };
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      const report: ReportAttributes = {
+        dateOfReport: date,
+        bankId: bank,
+        filename: filename,
+        notreceived: false,
+        received: true,
+        processed: false,
+        processedAt: null
+      }
+
+
+      await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
+
+      alert("Dados salvos com sucesso!");
+      setValidar(true)
     } catch(error) {
-      console.log("Erro ao enviar:", error)
+      console.error("Erro ao enviar:", error)
       setValidar(false)
     } finally {
       setMostrar(true)
@@ -170,7 +160,6 @@ function App() {
           <div className='flex-1 flex justify-center items-center backdrop-blur-sm'>
             <div className='flex flex-col p-10 h-120 w-120 bg-[#1e132f] border border-purple-500/20 shadow-2xl shadow-black/50 rounded-l-4xl'>
               <header className='mb-8 text-center'>
-                <span className="text-xs font-bold text-purple-500 uppercase tracking-widest">Ferramenta Automática</span>
                 <h1 className='text-2xl font-bold bg-linear-to-r from-purple-300 to-purple-600 bg-clip-text text-transparent'>
                     Conversor WORKBANK
                 </h1>
@@ -186,28 +175,32 @@ function App() {
                   />
                 </div>
 
-                <div>
-                  <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Escolha o banco:</p>
-                  <select
-                    onChange={(e) => {setBanco(e.target.value)}}
-                    className='w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-gray-200 shadow-inner cursor-pointer focus:border-purple-500 outline-none appearance-none transition-all' 
-                    name="Banco"
-                    id=""
-                  >
-                    <option className='hidden'>Escolha um banco</option>
-                      {bancos.map((banco) => (
-                        <option key={banco} value={banco} className="bg-[#1e132f]">{banco}</option>
-                      ))}
-                  </select>
-                </div>
+                <div className='flex gap-5'>
+                  <div>
+                    <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Escolha o banco:</p>
+                    <select
+                      onChange={(e) => {setBanco(e.target.value)}}
+                      className='w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-gray-200 shadow-inner cursor-pointer focus:border-purple-500 outline-none appearance-none transition-all' 
+                      name="Banco"
+                      id=""
+                    >
+                      <option className='hidden'>Escolha um banco</option>
+                        {bancos.map((banco) => (
+                          <option key={banco} value={banco} className="bg-[#1e132f]">{banco}</option>
+                        ))}
+                    </select>
+                  </div>
 
-                <div>
-                  <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Escolha o banco:</p>
-                  <input
-                    className="w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-sm text-gray-300 shadow-inner cursor-pointer focus:border-purple-500 outline-none transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-900/30 file:text-purple-400 hover:file:bg-purple-900/50"
-                    onChange={(e) => setDate(e.target.value)}
-                    type="date"
-                  />
+                  <div>
+                    <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Data do Relatório:</p>
+                    <input
+                      className='w-full bg-[#0f081a] border border-gray-800 mt-1 rounded-xl p-4 text-gray-200 shadow-inner cursor-pointer focus:border-purple-500 outline-none appearance-none transition-all' 
+                      onChange={(e) => setDate(e.target.value)}
+                      type="date"
+                      value={date}
+                    />
+                  </div>
+
                 </div>
 
                 <button

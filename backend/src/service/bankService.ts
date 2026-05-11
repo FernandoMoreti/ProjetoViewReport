@@ -11,7 +11,7 @@ class BankService {
     }
 
     async getByName(bank: any) {
-        return await BankRepository.getAll()
+        return await BankRepository.getByName(bank)
     }
 
     async create(bank: any) {

@@ -5,6 +5,7 @@ const route = Router()
 
 route.get("/", BankController.getAll)
 route.post("/", BankController.create)
+route.post("/findBankByName", BankController.getByName)
 route.put("/", BankController.update)
 
 export default route

@@ -20,21 +20,12 @@ export class BankRepository {
 
     async getByName(bank: string) {
         try {
-            return await Bank.findAll({
+            console.log(bank)
+            const bankFinded = await Bank.findOne({
                 where: {name: bank}
             })
-        } catch (error) {
-            throw error
-        }
-    }
-
-    async getIdByName(bank: string) {
-        try {
-            const resbank = await Bank.findOne({
-                where: {name: bank}
-            })
-
-            return resbank
+            console.log(bankFinded)
+            return bankFinded
         } catch (error) {
             throw error
         }

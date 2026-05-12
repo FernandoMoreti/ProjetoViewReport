@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FileText, Calendar, Loader } from 'lucide-react';
+import { FileText, Calendar, Loader, Trash2 } from 'lucide-react';
 import axios from "axios";
 
 interface ReportAttributes {
@@ -80,6 +80,28 @@ export default function EditReport({ bank }: PropsEdit) {
     } finally {
       setLoading(false);
       handle30Days(e)
+    }
+  };
+
+  const handleDelete = async (id: number | undefined, e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!id) return;
+
+    const confirmDelete = confirm("Tem certeza que deseja excluir este relatório?");
+    if (!confirmDelete || loading) return;
+
+    setLoading(true);
+    try {
+      await axios.delete(`http://192.168.1.90:30000/reports/${id}`);
+
+      alert("Relatório excluído com sucesso!");
+
+      setReports(reports.filter(report => report.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao excluir o relatório.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -176,6 +198,7 @@ export default function EditReport({ bank }: PropsEdit) {
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Nome do Relatório</th>
                   <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Status</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data de Proc.</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Ações</th>
                 </tr>
               </thead>
 
@@ -267,6 +290,16 @@ export default function EditReport({ bank }: PropsEdit) {
                           onChange={(e) => updateField(index, 'processedAt', e.target.value)}
                           className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff] scheme-dark"
                         />
+                      </td>
+                      <td className="px-6 py-8 text-center">
+                        <button
+                          onClick={(e) => handleDelete(report.id, e)}
+                          type="button"
+                          className="p-2 hover:bg-red-500/20 text-red-500 rounded-lg transition-colors group"
+                          title="Excluir relatório"
+                        >
+                          <Trash2 size={18} className="group-hover:scale-110 transition-transform" />
+                        </button>
                       </td>
                     </tr>
                   ))

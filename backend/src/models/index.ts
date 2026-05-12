@@ -2,10 +2,12 @@ import sequelize from '../config/db';
 import { Bank, initBank } from './Bank';
 import { initReport, Report } from './Report';
 import { initDay, Schedule } from './Schedules';
+import { initTicket, Ticket } from './Ticket';
 
 initReport(sequelize);
 initBank(sequelize);
 initDay(sequelize);
+initTicket(sequelize)
 
 Bank.hasMany(Report, {
     foreignKey: 'bankId',
@@ -27,5 +29,5 @@ Schedule.belongsTo(Bank, {
     as: 'bank'
 });
 
-export { sequelize, Bank, Report, Schedule };
+export { sequelize, Bank, Report, Schedule, Ticket };
 export default sequelize;

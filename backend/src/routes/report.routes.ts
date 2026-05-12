@@ -13,5 +13,6 @@ route.post("/date", ReportController.getReportsByDate)
 route.put("/", ReportController.update)
 route.post("/validation", upload.single("file"), ReportController.validReport)
 route.get("/validation", ReportController.validReport)
+route.delete("/:id", ReportController.delete)
 
 export default route

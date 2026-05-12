@@ -175,6 +175,20 @@ class ReportRepository {
             throw error
         }
     }
+
+    async delete(id: number) {
+        try {
+            await Report.destroy({
+                where: {
+                    id: id
+                }
+            })
+
+            return ''
+        } catch (error) {
+            throw error
+        }
+    }
 }
 
 export default new ReportRepository()

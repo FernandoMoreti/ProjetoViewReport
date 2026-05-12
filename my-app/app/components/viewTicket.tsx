@@ -1,236 +1,147 @@
 'use client'
 import { useEffect, useState } from "react";
-import { FileText, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import axios from "axios";
 
-interface ReportAttributes {
-  id?: number
-  dateOfReport: string;
-  bankId: number;
-  filename: string;
-  received: boolean;
-  processed: boolean;
-  processedAt: string | null;
-  bank: {
-    id: number
-    name: string
-  }
+interface TicketAttributes {
+  bank: string;
+  dateOfTicket: string;
+  about: string;
+  numTicket: string;
+  resolved: boolean;
 }
 
 
 export default function ViewTicket() {
-  const todayStr = new Date().toISOString().split('T')[0];
 
-  const [selectedDateInitial, setSelectedDateInitial] = useState(todayStr)
-  const [selectedDateFinal, setSelectedDateFinal] = useState(todayStr)
-  const [reports, setReports] = useState<ReportAttributes[]>([]);
-
-  let bank = "sting"
+  const [tickets, setTickets] = useState<TicketAttributes[]>([]);
 
   useEffect(() => {
-    async function getReports() {
-      setReports([]);
+    async function getTickets() {
+      setTickets([]);
       try {
-        const body = {
-          bank,
-          date: selectedDateInitial,
-          dateFinal: selectedDateFinal
-        }
-        const response = await axios.post("http://192.168.1.90:30000/reports/date", body)
+        const response = await axios.get("http://192.168.1.90:30000/tickets")
 
         const data = response.data;
 
         if (Array.isArray(data)) {
-          setReports(data);
+          setTickets(data);
         } else if (data && typeof data === 'object') {
-          setReports([data]);
+          setTickets([data]);
         } else {
-          setReports([]);
+          setTickets([]);
         }
       } catch (error) {
         console.error("Erro ao buscar relatórios:", error);
-        setReports([])
+        setTickets([])
       }
     }
 
-    getReports()
-  }, [selectedDateInitial, selectedDateFinal, bank])
+    getTickets()
+  }, [])
 
-  const handle30Days = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setReports([]);
-
-    let response;
-    let data;
+  const handleResolved = async (type: string) => {
+    setTickets([]);
     try {
-
-      if (bank == "Todos os Bancos") {
-        response = await axios.get("http://192.168.1.90:30000/reports/30date")
-        data = response.data;
+      let response
+      if (type == "resolved") {
+        response = await axios.get("http://192.168.1.90:30000/tickets/resolved")
       } else {
-        response = await axios.post("http://192.168.1.90:30000/reports/30date", {bank})
-        data = response.data;
+        response = await axios.get("http://192.168.1.90:30000/tickets")
       }
+
+      const data = response.data;
 
       if (Array.isArray(data)) {
-        setReports(data);
+        setTickets(data);
       } else if (data && typeof data === 'object') {
-        setReports([data]);
+        setTickets([data]);
       } else {
-        setReports([]);
+        setTickets([]);
       }
     } catch (error) {
-      console.log(error)
-      setReports([]);
+      console.error("Erro ao buscar relatórios:", error);
+      setTickets([])
     }
-
   }
 
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
       <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="pb-4 flex gap-5">
-          <div className="flex gap-5">
-              <div>
-                <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
-                  Data de Inicio
-                </label>
-
-                <div className="relative group">
-                  <Calendar
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
-                  />
-
-                  <input
-                    type="date"
-                    id="date-initial"
-                    value={selectedDateInitial}
-                    onChange={(e) => setSelectedDateInitial(e.target.value)}
-                    className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="text-purple-400 text-xs font-bold uppercase mb-2 block tracking-widest">
-                  Data de Final
-                </label>
-
-                <div className="relative group">
-                  <Calendar
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-500/50 group-focus-within:text-[#9823ff] transition-colors pointer-events-none"
-                  />
-
-                  <input
-                    type="date"
-                    id="date-final"
-                    value={selectedDateFinal}
-                    onChange={(e) => setSelectedDateFinal(e.target.value)}
-                    className="bg-[#1a0b2e] w-44 text-purple-300 border border-purple-900/50 rounded-xl py-2 pl-10 pr-3 text-sm outline-none focus:ring-2 focus:ring-[#9823ff]/50 focus:border-[#9823ff] transition-all appearance-none cursor-pointer scheme-dark"
-                  />
-                </div>
-              </div>
-            </div>
+        <div className="pb-4 flex justify-start gap-5">
           <div className="flex flex-col justify-end">
             <button
-              onClick={handle30Days}
-              className="bg-[#1a0b2e] h-10 w-30 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+              onClick={() => handleResolved("Notresolved")}
+              className="bg-[#1a0b2e] h-10 w-40 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
             >
-              Ultimos 30 dias
+              Não Finalizados
+            </button>
+          </div>
+          <div className="flex flex-col justify-end">
+            <button
+              onClick={() => handleResolved("resolved")}
+              className="bg-[#1a0b2e] h-10 w-40 text-purple-300 border border-purple-900/50 rounded-xl text-sm outline-none transition-all appearance-none cursor-pointer hover:bg-[#9823ff]/50 hover:-translate-y-0.5"
+            >
+              Finalizados
             </button>
           </div>
         </div>
-
         <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
           <div className="overflow-hidden rounded-[22px]">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-purple-900/20 border-b border-purple-900/10">
-                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Id</th>
-                  {
-                    bank == 'Todos os Bancos'
-                    ? <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
-                    : <></>
-                  }
-                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data Relatório</th>
-                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Nome do Relatório</th>
-                  <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Status</th>
-                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data de Proc.</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data Ticket</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
+                  <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Motivo</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Ticket</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Resolvido</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-purple-900/10 bg-[#1a0b2e]/40">
-                {reports.length === 0 ? (
+                {tickets.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-20 text-center text-purple-500/50 italic text-sm">
                       Nenhum relatório encontrado nessa data.
                     </td>
                   </tr>
                 ) : (
-                  reports.map((report, index) => (
+                  tickets.map((ticket, index) => (
                     <tr key={index} className="animate-in fade-in duration-300">
-                      <td className="px-6 py-8">
-                        <div className="flex items-center justify-center gap-2 text-sm text-white">
-                          {report.id}
-                        </div>
-                      </td>
-
-                      {
-                        bank == 'Todos os Bancos'
-                        ?
-                          <td className="px-6 py-8">
-                            <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
-                              {report.bank?.name}
-                            </div>
-                          </td>
-                        : <></>
-                      }
-
                       <td className="px-6 py-8">
                         <div className="flex justify-center gap-2 text-sm text-white">
                           <Calendar size={18} className="text-purple-500" />
-                          <p className="text-sm">{report.dateOfReport.split('-').reverse().join('/')}</p>
+                          <p className="text-sm">{ticket.dateOfTicket.split('-').reverse().join('/')}</p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-8">
+                        <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
+                          {ticket.bank}
                         </div>
                       </td>
 
                       <td className="px-4">
                         <div className="flex justify-center gap-2 text-sm text-white">
-                          <FileText className="left-3 text-purple-500" size={18} />
-                          <p className="text-sm">{report.filename}</p>
+                          <p className="text-sm">{ticket.about}</p>
                         </div>
                       </td>
 
                       <td className="px-4 py-8">
                         <div className="flex justify-center gap-6">
-                          <label className="flex flex-col items-center gap-2 cursor-pointer">
-                            <span className="text-[10px] font-bold text-purple-400/50 uppercase">Recebido</span>
-                            <input
-                              type="checkbox"
-                              readOnly
-                              checked={report.received || false}
-                              className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#9823ff]"
-                            />
-                          </label>
-                          <label className="flex flex-col items-center gap-2 cursor-pointer">
-                            <span className="text-[10px] font-bold text-purple-400/50 uppercase">Processado</span>
-                            <input
-                              type="checkbox"
-                              readOnly
-                              checked={report.processed || false}
-                              className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
-                            />
-                          </label>
+                          <p className="text-sm">{ticket.numTicket}</p>
                         </div>
                       </td>
 
                       <td className="px-6 py-8">
-                        <input
-                          type="date"
-                          readOnly
-                          value={report.processedAt ? report.processedAt.slice(0, 10) : ""}
-                          className="w-full bg-[#0f081a]/80 border border-purple-500/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-[#9823ff]"
-                        />
+                        <label className="flex flex-col items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            readOnly
+                            checked={ticket.resolved || false}
+                            className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
+                          />
+                        </label>
                       </td>
                     </tr>
                   ))

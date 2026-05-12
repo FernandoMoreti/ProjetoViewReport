@@ -524,31 +524,28 @@ class ReportService {
 
             let listReportsBanks = []
 
-            for (let key of Object.keys(grupos)) {
+            for (let key of Object.keys(times_for_week)) {
                 let times = times_for_week[key as keyof typeof times_for_week] || 0;
-                if (times != 0) {
-                    const listaOriginal = grupos[key] || [];
-                    let itemArchive = {}
-
-                    const arquivosUnicos = new Set();
-                    const times_received = listaOriginal.filter(item => {
-                        itemArchive = item
-                        if (arquivosUnicos.has(item.Arquivo)) {
-                            return false;
-                        }
-                        arquivosUnicos.add(item.Arquivo);
-                        return true;
-                    }).length;
-
-                    let data = {
-                        "nameReport": key,
-                        "expectReceived": times,
-                        "timesReceived": times_received,
-                        "archive": itemArchive
+                const listaOriginal = grupos[key] || [];
+                const arquivosUnicos = new Set();
+                const listaDeArquivosUnicos = listaOriginal.filter(item => {
+                    if (arquivosUnicos.has(item.Arquivo)) {
+                        return false;
                     }
+                    arquivosUnicos.add(item.Arquivo);
+                    return true;
+                });
 
-                    listReportsBanks.push(data)
-                }
+                const times_received = listaDeArquivosUnicos.length;
+
+                let data = {
+                    "nameReport": key,
+                    "expectReceived": times,
+                    "timesReceived": times_received,
+                    "archive": listaDeArquivosUnicos
+                };
+
+                listReportsBanks.push(data);
             }
 
             return listReportsBanks
@@ -556,6 +553,13 @@ class ReportService {
             console.error(e)
             return
         }
+    }
+
+    async delete(id: any) {
+
+        await ReportRepository.delete(id)
+
+        return ''
     }
 }
 

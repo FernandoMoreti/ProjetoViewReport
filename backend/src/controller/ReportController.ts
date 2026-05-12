@@ -60,6 +60,7 @@ class ReportController {
     }
 
     async create(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Create Report")
         const { bank, reports } = req.body
 
         if (!bank) {
@@ -67,12 +68,12 @@ class ReportController {
             return 'erro'
         }
 
-
         const newReports = await ReportService.create(bank, reports)
         return res.status(200).json(newReports)
     }
 
     async update(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Update Report")
         const { reports } = req.body
 
         const newReports = await ReportService.update(reports)
@@ -86,6 +87,14 @@ class ReportController {
         const data = await ReportService.validReport(file!)
 
         return res.status(200).json(data)
+    }
+
+    async delete(req: Request, res: Response) {
+        console.log("ROTAS: Entrei no método Delete Report")
+        const { id } = req.params
+
+        await ReportService.delete(id)
+        return res.status(200).json({ message: "Excluido com sucesso "})
     }
 }
 

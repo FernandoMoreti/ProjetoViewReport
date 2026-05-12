@@ -7,3 +7,82 @@ export function generateLast30Days() {
   }
   return dates; // Retorna [hoje, ontem, anteontem...]
 };
+
+const map: Record<string, string> = {
+  "Aki": "AKI CAPITAL",
+  "Amigoz": "AMIGOZ",
+  "BRB360": "BRB 360",
+  "BRBInconta Validar": "BRB INCONTA",
+  "BRBRed": "BRB RED",
+  "BTW": "BTW",
+  // "Bv": "BV",
+  "C6Auto": "C6 AUTO",
+  "C6bankComissao": "C6 BANK",
+  "C6Equity": "C6 CAR EQUITY",
+  "Caixa": "CBA - CAIXA",
+  "CAPITALCONSIGCancelados": "CAPITAL CONSIG",
+  "CAPITALCONSIGComissao": "CAPITAL CONSIG",
+  "CAPITALCONSIGSeguro": "CAPITAL CONSIG",
+  // "ComissaoZerada": "OUTROS",
+  // "Crefaz": "CREFAZ",
+  // "CrefazCLT": "CREFAZ CLT",
+  // "CrefazJN": "CREFAZ JN",
+  // "CrefazWL": "CREFAZ WL",
+  "Digio": "DIGIO",
+  "EmpresteiCred": "EMPRESTEI CRED",
+  "Euro": "EURO 17",
+  "Evol": "EVOL",
+  // "Facta": "FACTA",
+  "Grandino": "GRANDINO",
+  "Happy": "HAPPY",
+  "Hope": "HOPE",
+  "Icred": "ICRED",
+  // "Itau360": "ITAU 360",
+  // "ItauConsig": "ITAU CONSIG",
+  "Jbcred": "JBCRED",
+  "Kardbank": "KARDBANK",
+  // "KGIRO": "KGIRO",
+  // "MASTER": "MASTER",
+  "MEUCASHCARD": "MEUCASHCARD",
+  // "NBC": "",
+  // "NEO": "",
+  "NovoSaque": "NOVO SAQUE",
+  "NovoSaqueCartao": "NOVO SAQUE",
+  "NYC": "NYC",
+  "ParanaBank": "PARANÁ BANK",
+  "PANLAFY": "PAN LAFY",
+  "PHtech": "PH TECH",
+  "Presenca": "PRESENÇA BANK",
+  "QualiBank": "QUALIBANK",
+  // "QUERO CARTÃO": "",
+  // "QUERO CONSIG": "",
+  // "SABEMI": "",
+  // "SafraComissaoZero": "",
+  // "SantanderFit": "",
+  // "SantanderFVEVI": "",
+  // "OLE_FVE": "",
+  "TotalCash": "TOTAL CASH",
+  "V8": "V8",
+  "VCtexNOVA": "VCTEX",
+  "VCtexWL": "VCTEX",
+  // "Viacerta": "",
+  "WebCash": "WEBCASH",
+}
+
+export async function findBank(bank: string): Promise<string> {
+
+  try {
+    const getBank: string = map[bank] ?? "Banco não localizado";
+    return getBank
+  } catch (error) {
+    console.error(error)
+    return "error"
+  }
+
+}
+
+export function extractFilename(disposition: string | null) {
+  if (!disposition) return null;
+  const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition);
+  return matches && matches[1] ? decodeURIComponent(matches[1].replace(/['"]/g, '')) : null;
+}

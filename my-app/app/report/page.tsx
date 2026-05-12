@@ -38,7 +38,7 @@ export default function Report() {
 
         try {
             const response = await axios.post(
-                "http://localhost:3003/reports/validation",
+                "http://192.168.1.90:30000/reports/validation",
                 form,
                 {
                     headers: { "Content-Type": "multipart/form-data" },

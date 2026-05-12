@@ -54,7 +54,6 @@ export default function EditTicket() {
     if (loading) return;
     setLoading(true);
     try {
-      console.log(tickets)
       await axios.put("http://192.168.1.90:30000/tickets", { tickets });
 
       await new Promise(resolve => setTimeout(resolve, 1500));

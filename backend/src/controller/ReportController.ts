@@ -76,8 +76,17 @@ class ReportController {
         console.log("ROTAS: Entrei no método Update Report")
         const { reports } = req.body
 
-        const newReports = ReportService.update(reports)
+        const newReports = await ReportService.update(reports)
         return res.status(200).json(newReports)
+    }
+
+    async validReport(req: Request, res: Response) {
+
+        const file = req.file
+
+        const data = await ReportService.validReport(file!)
+
+        return res.status(200).json(data)
     }
 
     async delete(req: Request, res: Response) {

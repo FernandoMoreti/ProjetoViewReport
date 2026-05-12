@@ -68,7 +68,6 @@ export default function AddTicket() {
 
     setLoading(true);
     try {
-      console.log(tickets)
       await axios.post("http://192.168.1.90:30000/tickets", { tickets });
 
       await new Promise(resolve => setTimeout(resolve, 1500));

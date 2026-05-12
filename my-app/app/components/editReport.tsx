@@ -92,7 +92,6 @@ export default function EditReport({ bank }: PropsEdit) {
 
     setLoading(true);
     try {
-      console.log("Excluindo")
       await axios.delete(`http://192.168.1.90:30000/reports/${id}`);
 
       alert("Relatório excluído com sucesso!");

@@ -22,8 +22,6 @@ export default function ViewTicket() {
       try {
         const response = await axios.get("http://192.168.1.90:30000/tickets")
 
-        console.log(response.data)
-
         const data = response.data;
 
         if (Array.isArray(data)) {

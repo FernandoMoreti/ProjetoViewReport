@@ -1,6 +1,9 @@
 import BankRepository from "../repository/BankRepository"
 import ReportRepository from "../repository/ReportRepository"
-import { getCurrentDayOfWeek } from "../utils/utils"
+import { getCurrentDayOfWeek, findBank } from "../utils/utils"
+import { read_excel } from '../utils/utils'
+import { PropReport } from "../Types/type"
+import { BANCOS_MAIS_LOJAS, times_for_week } from "../config/DePara/DePara"
 
 class ReportService {
     async getAll() {
@@ -125,6 +128,430 @@ class ReportService {
         } catch (error) {
             console.error(error)
             throw error
+        }
+    }
+
+    async validReport(file: Express.Multer.File) {
+        try {
+            const df = await read_excel(file.buffer) as PropReport[]
+
+            const grupos = Object.groupBy(df, (item: PropReport) => item.Banco as string);
+
+            const listaWork = grupos['WORKBANK']
+
+            for (let item of listaWork!) {
+                const nameBank = item.Arquivo.split("-")[0].trim()
+                const bank = findBank(nameBank)
+                const destino = bank || 'OUTROS';
+
+                if (!grupos[destino]) {
+                    grupos[destino] = [];
+                }
+
+                grupos[destino].push(item);
+            }
+
+            delete grupos["WORKBANK"]
+
+            for (let banco of BANCOS_MAIS_LOJAS) {
+                if (banco === "BMG" && grupos["BMG"]) {
+                    for (let i of grupos["BMG"]!) {
+                        const sufixoLoja = i.Arquivo.includes("53259") ? "53259" : "34362";
+                        const termos = [
+                            "_BMG_CARD_ATO_E_DIFERIDO_CONSOLIDADO",
+                            "_CARTAO_BENEFICIO_ATO_E_DIFERIDO_CONSOLIDADO",
+                            "_CONSIGNADO_ATO_E_DIFERIDO_CONSOLIDADO",
+                            "_SAQUE_FGTS_ATO_E_DIFERIDO_CONSOLIDADO",
+                            "_ROTATIVO_CONSOLIDADO",
+                            "_SEGURO_ATO_CONSOLIDADO",
+                            "_SALDOPAGOCARTAOBENEFICIO",
+                            "_SALDOPAGOCARD",
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `BMG_${sufixoLoja}${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "C6 BANK" && grupos["C6 BANK"]) {
+                    for (let i of grupos["C6 BANK"]!) {
+                        const termos = [
+                            "ANALÍTICO COMISSÃO FLAT (AUTOMÁTICO + MANUAL (C+D))",
+                            "ANALÍTICO KGIRO",
+                            "C6 AUTO -COMISSÃO À VISTA - ANALÍTICO",
+                            "C6 AUTO ZERADO - COMISSÃO À VISTA - ANALÍTICO",
+                            "C6EQUITY"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+                        if (termoEncontrado) {
+                            const novaChave = `C6_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "DAYCOVAL" && grupos["DAYCOVAL"]) {
+                    for (let i of grupos["DAYCOVAL"]!) {
+                        const termos = [
+                            "EXERCITO CARTÃO RELATORIOCOMISSAO",
+                            "CARTÃO RELATORIOCOMISSAO",
+                            "EXERCITO CONSIGNADO COMISSOES A RECEBER",
+                            "CONSIGNADO COMISSOES A RECEBER",
+                            "AUTORREGULAÇÃO",
+                            "PRESTAMISTA DIAMANTE",
+                            "PRESTAMISTA"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `DAYCOVAL_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "FACTA FINANCEIRA" && grupos["FACTA FINANCEIRA"]) {
+                    for (let i of grupos["FACTA FINANCEIRA"]!) {
+                        const termos = [
+                            "WL",
+                            "LEV"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `FACTA_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "MERCANTIL" && grupos["MERCANTIL"]) {
+                    for (let i of grupos["MERCANTIL"]!) {
+                        const termos = [
+                            "BMB-DIARIO-COMISSAO-AVISTA",
+                            "BMB-DIARIO-COMISSAO-PARCELADO",
+                            "MBF-DIARIO-COMISSAO-PARCELADO",
+                            "BMB-SEMANAL-PRODUCAO",
+                            "MBF-SEMANAL-PRODUCAO",
+                            "RELATORIO_TARIFA_-_LEV_INTERMEDIACAO"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `MERCANTIL_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "NOVOSAQUE" && grupos["NOVOSAQUE"]) {
+                    for (let i of grupos["NOVOSAQUE"]!) {
+                        const termos = [
+                            "NOVOSAQUE CLT",
+                            "NOVOSAQUE"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `NOVOSAQUE_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "PAN" && grupos["PAN"]) {
+                    for (let i of grupos["PAN"]!) {
+                        const termos = [
+                            "RELCOMISSAOCARTAO",
+                            "RELCOMISSAO",
+                            "DEMONSTRATIVO",
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+
+                            if (i.Arquivo.includes("903987")) {
+                                const novaChave = `PAN_3987_${termoEncontrado}`;
+
+                                if (!grupos[novaChave]) {
+                                    grupos[novaChave] = [];
+                                }
+
+                                grupos[novaChave].push(i);
+                            } else if (i.Arquivo.includes("004336")) {
+                                const novaChave = `PAN_4336_${termoEncontrado}`;
+
+                                if (!grupos[novaChave]) {
+                                    grupos[novaChave] = [];
+                                }
+
+                                grupos[novaChave].push(i);
+                            } else {
+                                const novaChave = `PAN_2907_${termoEncontrado}`;
+
+                                if (!grupos[novaChave]) {
+                                    grupos[novaChave] = [];
+                                }
+
+                                grupos[novaChave].push(i);
+                            }
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "QUERO MAIS" && grupos["QUERO MAIS"]) {
+                    for (let i of grupos["QUERO MAIS"]!) {
+                        const termos = [
+                            "QUERO MAIS CARTAO",
+                            "QUERO MAIS",
+                            "QUERO+_CANCELAMENTO"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `QUERO MAIS_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "SAFRA" && grupos["SAFRA"]) {
+                    for (let i of grupos["SAFRA"]!) {
+                        const termos = [
+                            "PLUS - CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
+                            "PLUS - GESTÃO CORBAN - DÉBITOS REALIZADOS",
+                            "PLUS - SAFRACOMISSAOZERO",
+                            "CONSULTA COMISSOES - DATA PAGAMENTO - NOVO",
+                            "GESTÃO CORBAN - DÉBITOS REALIZADOS",
+                            "SAFRACOMISSAOZERO"
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `SAFRA_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "OLE" && grupos["OLE"]) {
+                    for (let i of grupos["OLE"]!) {
+                        const termos = [
+                            "OLE_FVE",
+                            "OLE WL",
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `OLE_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "VCTEX" && grupos["VCTEX"]) {
+                    for (let i of grupos["VCTEX"]!) {
+                        const termos = [
+                            "VCTEX NOVA LEV",
+                            "VCTEX WL",
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `VCTEX_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+                if (banco === "CREFAZ" && grupos["CREFAZ"]) {
+                    for (let i of grupos["CREFAZ"]!) {
+                        const termos = [
+                            "CLT CREFAZ",
+                            "CREFAZ",
+                        ];
+
+                        const termoEncontrado = termos.find(termo => i.Arquivo.includes(termo));
+
+                        if (termoEncontrado) {
+                            const novaChave = `CREFAZ_${termoEncontrado}`;
+
+                            if (!grupos[novaChave]) {
+                                grupos[novaChave] = [];
+                            }
+
+                            grupos[novaChave].push(i);
+                        } else {
+
+                            if (!grupos["NAO MAPEADO"]) {
+                                grupos["NAO MAPEADO"] = [];
+                            }
+
+                            grupos["NAO MAPEADO"]?.push(i)
+                        }
+                    }
+                }
+            }
+
+            let listReportsBanks = []
+
+            for (let key of Object.keys(times_for_week)) {
+                let times = times_for_week[key as keyof typeof times_for_week] || 0;
+                const listaOriginal = grupos[key] || [];
+                const arquivosUnicos = new Set();
+                const listaDeArquivosUnicos = listaOriginal.filter(item => {
+                    if (arquivosUnicos.has(item.Arquivo)) {
+                        return false;
+                    }
+                    arquivosUnicos.add(item.Arquivo);
+                    return true;
+                });
+
+                const times_received = listaDeArquivosUnicos.length;
+
+                let data = {
+                    "nameReport": key,
+                    "expectReceived": times,
+                    "timesReceived": times_received,
+                    "archive": listaDeArquivosUnicos
+                };
+
+                listReportsBanks.push(data);
+            }
+
+            return listReportsBanks
+        } catch (e) {
+            console.error(e)
+            return
         }
     }
 

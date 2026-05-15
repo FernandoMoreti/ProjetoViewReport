@@ -64,8 +64,8 @@ const map: Record<string, string> = {
   "OLE_FVE": "SANTANDER OLE",
   "TotalCash": "TOTAL CASH",
   "V8": "V8",
-  "VCtexNOVA": "VCTEX",
-  "VCtexWL": "VCTEX",
+  "VCtexNOVA": "VCTEX NOVA LEV",
+  "VCtexWL": "VCTEX WL",
   // "Viacerta": "",
   "WebCash": "WEBCASH",
 }

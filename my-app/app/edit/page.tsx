@@ -131,6 +131,7 @@ function App() {
     "NBC",
     "NEO",
     "NovoSaque",
+    "NovoSaqueCF",
     "NovoSaqueCartao",
     "NYC",
     "ParanaBank",

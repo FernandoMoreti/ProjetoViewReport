@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutGrid, SquarePen, ClipboardMinus, ChevronDown, Landmark, ChevronRight, Calendar, Ticket } from 'lucide-react';
+import { LayoutGrid, SquarePen, ClipboardMinus, ChevronDown, Landmark, ChevronRight, Calendar, Ticket, LayoutDashboard } from 'lucide-react';
 import axios from 'axios';
 
 interface Bank {
@@ -45,6 +45,17 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 space-y-1">
+        <Link
+          href={'/dashboard'}
+          onClick={() => setIsActivate('')}
+          className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <LayoutDashboard size={18} className="text-purple-400" />
+            <span className="text-sm font-semibold tracking-wide">Dashboard</span>
+          </div>
+        </Link>
+
         <button
           onClick={() => setIsBanksOpen(!isBanksOpen)}
           className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
@@ -76,6 +87,7 @@ export default function Sidebar() {
               <span className="text-sm font-medium">{bank.name}</span>
             </Link>
           ))}
+
           <Link
               href={`/?bank=Adicionar Banco`}
               onClick={() => setIsActivate('ADICIONAR BANCO')}

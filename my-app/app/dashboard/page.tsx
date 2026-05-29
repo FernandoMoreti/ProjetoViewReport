@@ -54,9 +54,19 @@ export default function Dashboard() {
 
         const reports = response.data || [];
 
-        const listOfNotProcessed = reports.filter((r: BankReport) => r.notreceived);
-        const listOfProcessed = reports.filter((r: BankReport) => r.processed);
-        const listOfReceived = reports.filter((r: BankReport) => r.received && !r.processed);
+        const mapBancosUnicos = new Map();
+
+        reports.forEach((report: BankReport) => {
+          if (!mapBancosUnicos.has(report.bankId)) {
+            mapBancosUnicos.set(report.bankId, report);
+          }
+        });
+
+        const reportsUnicos = Array.from(mapBancosUnicos.values());
+
+        const listOfNotProcessed = reportsUnicos.filter((r: BankReport) => r.notreceived);
+        const listOfProcessed = reportsUnicos.filter((r: BankReport) => r.processed);
+        const listOfReceived = reportsUnicos.filter((r: BankReport) => r.received && !r.processed);
 
         setReportsProcessed(listOfProcessed);
         setReportsNotProcessed(listOfNotProcessed);
@@ -68,7 +78,7 @@ export default function Dashboard() {
         const dayOfWeek = days[new Date().getDay()];
         const filteredBanks = bankByDay.data.filter((b: { dayOfWeek: string }) => b.dayOfWeek === dayOfWeek)
 
-        setExpectedCount(filteredBanks.length || 25)
+        setExpectedCount(filteredBanks.length)
       } catch (e) {
         console.error("Erro ao buscar dados do painel:", e)
       }
@@ -77,15 +87,15 @@ export default function Dashboard() {
   }, [initialDate])
 
   const pieData = [
-    { name: 'Processados', value: reportsProcessed.length || 15, color: COLORS.processed },
-    { name: 'Aguardando Processamento', value: reportsReceived.length || 5, color: COLORS.received },
-    { name: 'Não Recebidos', value: reportsNotProcessed.length || 5, color: COLORS.notReceived },
+    { name: 'Processados', value: reportsProcessed.length, color: COLORS.processed },
+    { name: 'Aguardando Processamento', value: reportsReceived.length, color: COLORS.received },
+    { name: 'Não Recebidos', value: reportsNotProcessed.length, color: COLORS.notReceived },
   ];
 
   const barData = [
-    { name: 'Processados', quantidade: reportsProcessed.length || 15, fill: COLORS.processed },
-    { name: 'Aguardando', quantidade: reportsReceived.length || 5, fill: COLORS.received },
-    { name: 'Pendentes', quantidade: reportsNotProcessed.length || 5, fill: COLORS.notReceived },
+    { name: 'Processados', quantidade: reportsProcessed.length, fill: COLORS.processed },
+    { name: 'Aguardando', quantidade: reportsReceived.length, fill: COLORS.received },
+    { name: 'Pendentes', quantidade: reportsNotProcessed.length, fill: COLORS.notReceived },
   ];
 
   const totalConcluded = reportsProcessed.length + reportsNotProcessed.length;

@@ -75,7 +75,7 @@ export default function Dashboard() {
         setRecentActivity(reports.slice(-5).reverse());
 
         const bankByDay = await axios.get('http://192.168.1.90:30000/dayOfWeek')
-        const dayOfWeek = days[new Date().getDay()];
+        const dayOfWeek = days[new Date(initialDate).getDay() + 1];
         const filteredBanks = bankByDay.data.filter((b: { dayOfWeek: string }) => b.dayOfWeek === dayOfWeek)
 
         setExpectedCount(filteredBanks.length)

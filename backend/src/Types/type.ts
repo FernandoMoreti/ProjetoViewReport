@@ -10,3 +10,8 @@ export interface PropReport {
   Usuário: String
   Processo: String
 }
+
+export interface Intervalo {
+  min: number;
+  max: number;
+}

@@ -169,6 +169,13 @@ export const times_for_week = {
 }
 
 export const times_for_day = {
+  "ANCORA": {
+    "Segunda": 1,
+    "Terça": 1,
+    "Quarta": 1,
+    "Quinta": 1,
+    "Sexta": 1,
+  },
   "AKI CAPITAL": {
     "Segunda": 1,
     "Terça": 1,
@@ -252,6 +259,13 @@ export const times_for_day = {
     "Quarta": 1,
     "Quinta": 1,
     "Sexta": 1,
+  },
+  "C6 EQUITY": {
+    "Segunda": 1,
+    "Terça": 0,
+    "Quarta": 0,
+    "Quinta": 0,
+    "Sexta": 0,
   },
   "CAIXA": {
     "Segunda": 0,
@@ -344,6 +358,13 @@ export const times_for_day = {
     "Quinta": 1,
     "Sexta": 1,
   },
+  "HAPPY": {
+    "Segunda": 0,
+    "Terça": 1,
+    "Quarta": 0,
+    "Quinta": 1,
+    "Sexta": 0,
+  },
   "HOPE": {
     "Segunda": 1,
     "Terça": 1,
@@ -371,6 +392,13 @@ export const times_for_day = {
     "Quarta": 0,
     "Quinta": 2,
     "Sexta": 0,
+  },
+  "MASTER": {
+    "Segunda": 1,
+    "Terça": 1,
+    "Quarta": 1,
+    "Quinta": 1,
+    "Sexta": 1,
   },
   "MERCANTIL": {
     "Segunda": "min 2 max 4",
@@ -421,7 +449,7 @@ export const times_for_day = {
     "Quinta": 1,
     "Sexta": 1,
   },
-  "PARANA BANCO": {
+  "PARANA BANK": {
     "Segunda": 1,
     "Terça": 1,
     "Quarta": 1,
@@ -478,11 +506,18 @@ export const times_for_day = {
     "Sexta": 1,
   },
   "SANTANDER": {
-    "Segunda": 2,
-    "Terça": 2,
-    "Quarta": 2,
-    "Quinta": 2,
-    "Sexta": 2,
+    "Segunda": 1,
+    "Terça": 1,
+    "Quarta": 1,
+    "Quinta": 1,
+    "Sexta": 1,
+  },
+  "OLE": {
+    "Segunda": 1,
+    "Terça": 1,
+    "Quarta": 1,
+    "Quinta": 1,
+    "Sexta": 1,
   },
   "TOTALCASH": {
     "Segunda": 0,
@@ -512,8 +547,21 @@ export const times_for_day = {
     "Quinta": 0,
     "Sexta": 0,
   },
+  "SEGURO": {
+    "Segunda": 0,
+    "Terça": 0,
+    "Quarta": 1,
+    "Quinta": 0,
+    "Sexta": 0,
+  },
+  "OUTROS": {
+    "Segunda": 0,
+    "Terça": 0,
+    "Quarta": 1,
+    "Quinta": 0,
+    "Sexta": 0,
+  },
 }
-
 
 export const banks = [
   'AKI', 

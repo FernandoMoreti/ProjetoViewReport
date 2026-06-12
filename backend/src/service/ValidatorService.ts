@@ -3,12 +3,13 @@ import { getDaysByWeek, read_excel } from "../utils/utils";
 import { banks, times_for_day } from "../config/DePara/DePara";
 
 class ValidatorService {
-    async mapperUpload (file: Express.Multer.File, initialDate: string, finalDate: string) {
+    async mapperUpload (file: Express.Multer.File, filePaste: Express.Multer.File, initialDate: string, finalDate: string) {
         try {
 
             const listDaysOfWeek = getDaysByWeek(initialDate, finalDate);
 
             const df = await read_excel(file.buffer) as PropReport[]
+            const dfPaste = await read_excel(file.buffer) as PropReport[]
             const grupos = Object.groupBy(df, (item: PropReport) => item.Banco as string);
 
             const reportsWorkbank = grupos["WORKBANK"]

@@ -2,7 +2,7 @@ import app from './app';
 
 import sequelize from './models';
 
-const PORT = process.env.PORT || 3010;
+const PORT = process.env.PORT || 3003;
 
 sequelize.sync({ alter: true }).then(() => {
     app.listen(PORT, () => {

@@ -22,7 +22,7 @@ interface CashflowAttributes {
 
 export default function ViewTicket() {
 
-  const [tickets, setTickets] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<(TicketAttributes | CashflowAttributes)[]>([]);
   const [currentView, setCurrentView] = useState<"tickets" | "tickets2" | "cashflow">("tickets");
 
   useEffect(() => {

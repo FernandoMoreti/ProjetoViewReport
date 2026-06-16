@@ -23,6 +23,27 @@ export interface BankReport {
   received: boolean;
 }
 
+interface ExpectedValue {
+  min: number;
+  max: number;
+  received?: number;
+  reportsReceived?: ExpectedReport[];
+  ok?: string;
+  valueMore?: number;
+  valueLess?: number;
+}
+
+interface ExpectedReport {
+  ID: number;
+  Arquivo: string;
+  Importação: string;
+  Tipo: string;
+}
+
+interface ExpectedData {
+  [bankName: string]: ExpectedValue;
+}
+
 export default function Dashboard() {
   const todayStr = new Date().toISOString().split('T')[0];
 
@@ -39,7 +60,7 @@ export default function Dashboard() {
   const [isReport, setIsReport] = useState(true)
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [dados, setDados] = useState()
+  const [dados, setDados] = useState<ExpectedData>({})
   const [file, setFile] = useState<File | null>(null)
   const [filePaste, setFilePaste] = useState<File | null>(null)
   const [filtroBanco, setFiltroBanco] = useState('TODOS')
@@ -122,6 +143,8 @@ export default function Dashboard() {
       )
 
       const data = response.data
+
+      const expectedObj = data.expected as Record<string, { min: number; max: number }[] | ExpectedValue>;
       
       for (const bank of Object.keys(data.expected)) {
         let min: number = 0
@@ -138,10 +161,10 @@ export default function Dashboard() {
       }
 
       
-      const acharChaveExpectativa = (nomeBancoRecebido: string, expectedObj: any) => {
+      const acharChaveExpectativa = (nomeBancoRecebido: string, expectedObj: unknown) => {
         let nomeLimpo = nomeBancoRecebido.trim().toLowerCase();
         nomeLimpo = nomeLimpo.replace(" ", "")
-        return Object.keys(expectedObj).find(chave => {
+        return Object.keys(expectedObj!).find(chave => {
           let chaveLimpa = chave.trim().toLowerCase();
           chaveLimpa = chaveLimpa.replace(" - ", "")
           chaveLimpa = chaveLimpa.replace(" ", "")
@@ -153,13 +176,14 @@ export default function Dashboard() {
       let totalMore: number = 0
       let totalLess: number = 0
 
+      const reportsByBankObj = data.reportsByBank as Record<string, ExpectedReport[]>;
       data.reportsByBank["WORKBANK"] = []
-      console.log(data.reportsByBank)
 
       for (const bank of Object.keys(data.reportsByBank)) {
 
         const arquivosVistos = new Set<string>();
-        const relatoriosUnicos = data.reportsByBank[bank].filter((report) => {
+        const relatoriosUnicos = reportsByBankObj[bank].filter((report: ExpectedReport) => {
+          console.log(report)
           const nomeDoArquivo = report.Arquivo?.trim().toLowerCase();
           if (arquivosVistos.has(nomeDoArquivo)) {
             return false;
@@ -174,10 +198,10 @@ export default function Dashboard() {
         let valueLess: number = 0
         let valueMore: number = 0
 
-        const chaveExpectativa = acharChaveExpectativa(bank, data.expected);
+        const chaveExpectativa = acharChaveExpectativa(bank, expectedObj);
 
         if (chaveExpectativa) {
-          const regrasDoBanco = data.expected[chaveExpectativa];
+          const regrasDoBanco = expectedObj[chaveExpectativa] as { min: number; max: number };
 
           if (totalRecebido === regrasDoBanco.min) {
             isOk = "OK"
@@ -191,7 +215,7 @@ export default function Dashboard() {
             isOk = "MENOS"
           }
 
-          data.expected[chaveExpectativa] = {
+          expectedObj[chaveExpectativa] = {
             min: regrasDoBanco.min,
             max: regrasDoBanco.max,
             received: totalRecebido,
@@ -202,7 +226,7 @@ export default function Dashboard() {
           }
 
         } else {
-          console.log(`\n❌ BANCO: ${bank} -> Não possui nenhuma regra em 'data.expected'`);
+          console.log(`\n❌ BANCO: ${bank} -> Não possui nenhuma regra em 'expectedObj'`);
         }
       }
 
@@ -498,7 +522,6 @@ export default function Dashboard() {
                       </p>
                     </div>
 
-                    {/* BOTÕES DE FILTRO */}
                     <div className="flex flex-wrap gap-2 bg-black/20 p-1 rounded-2xl border border-white/5 self-start sm:self-center">
                       {[
                         { id: 'TODOS', label: 'Todos' },
@@ -526,7 +549,6 @@ export default function Dashboard() {
                       .filter(([_, bancoInfo]) => {
                         if (!bancoInfo || typeof bancoInfo !== 'object') return false;
                         
-                        // Lógica do Filtro
                         if (filtroBanco === 'OK') {
                           return bancoInfo.ok === 'OK';
                         }
@@ -536,21 +558,20 @@ export default function Dashboard() {
                         if (filtroBanco === 'SOBRANDO') {
                           return bancoInfo.ok === 'MAIS' || (bancoInfo.valueMore && bancoInfo.valueMore > 0);
                         }
-                        return true; // 'TODOS'
+                        return true;
                       })
                       .map(([bancoNome, bancoInfo]) => {
-                        // Configuração de Badges de Status baseado nos dados reais
                         let statusConfig = {
                           bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
                           label: 'OK'
                         };
 
-                        if (bancoInfo.ok === 'MENOS' || bancoInfo.valueLess > 0) {
+                        if (bancoInfo.ok === 'MENOS' || bancoInfo.valueLess! > 0) {
                           statusConfig = {
                             bg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                             label: `Faltam ${bancoInfo.valueLess || 0}`
                           };
-                        } else if (bancoInfo.ok === 'MAIS' || bancoInfo.valueMore > 0) {
+                        } else if (bancoInfo.ok === 'MAIS' || bancoInfo.valueMore! > 0) {
                           statusConfig = {
                             bg: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
                             label: `Extra +${bancoInfo.valueMore || 0}`
@@ -630,8 +651,8 @@ export default function Dashboard() {
 
                   {Object.entries(dados).filter(([_, info]) => {
                     if (filtroBanco === 'OK') return info?.ok === 'OK';
-                    if (filtroBanco === 'FALTANDO') return info?.ok === 'MENOS' || info?.valueLess > 0;
-                    if (filtroBanco === 'SOBRANDO') return info?.ok === 'MAIS' || info?.valueMore > 0;
+                    if (filtroBanco === 'FALTANDO') return info?.ok === 'MENOS' || info.valueLess! > 0;
+                    if (filtroBanco === 'SOBRANDO') return info?.ok === 'MAIS' || info.valueMore! > 0;
                     return true;
                   }).length === 0 && (
                     <div className="text-center py-12">

@@ -250,16 +250,26 @@ export default function Dashboard() {
               <Calendar size={14} /> Resumo diário de arquivos bancários
             </p>
           </div>
-          <div>
+          <div className="flex bg-[#0f081a]/40 border border-purple-900/40 p-1 rounded-xl backdrop-blur-md">
             <button 
               onClick={() => setIsReport(true)}
+              className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-300 cursor-pointer ${
+                isReport 
+                  ? "bg-purple-500/20 text-white border border-purple-500/30 shadow-lg shadow-purple-500/5" 
+                  : "text-purple-400/60 hover:text-purple-200 hover:bg-purple-950/30"
+              }`}
             >
-              <p>Relatorio</p>
+              Relatório
             </button>
             <button 
               onClick={() => setIsReport(false)}
+              className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-300 cursor-pointer ${
+                !isReport 
+                  ? "bg-[#ff6b3d]/20 text-white border border-[#ff6b3d]/30 shadow-lg shadow-[#ff6b3d]/5" 
+                  : "text-purple-400/60 hover:text-purple-200 hover:bg-purple-950/30"
+              }`}
             >
-              <p>Banco</p>
+              Banco
             </button>
           </div>
           <div className='pl-60'>

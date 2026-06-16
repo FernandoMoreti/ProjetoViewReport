@@ -1,17 +1,9 @@
 import { DataTypes, Model, Sequelize, Optional } from 'sequelize';
+import { TicketAtt } from '../Types/type'
 
-interface TicketAttributes {
-  id: number;
-  bank: string;
-  dateOfTicket: string;
-  about: string;
-  numTicket: string;
-  resolved: boolean;
-}
+export interface TicketCreationAttributes extends Optional<TicketAtt, 'id'> {}
 
-export interface TicketCreationAttributes extends Optional<TicketAttributes, 'id'> {}
-
-export class Ticket extends Model<TicketAttributes, TicketCreationAttributes> implements TicketAttributes {
+export class Ticket extends Model<TicketAtt, TicketCreationAttributes> implements TicketAtt {
   public id!: number;
   public bank!: string;
   public dateOfTicket!: string;

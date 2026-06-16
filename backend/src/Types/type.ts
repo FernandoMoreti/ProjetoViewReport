@@ -15,3 +15,21 @@ export interface Intervalo {
   min: number;
   max: number;
 }
+
+export interface TicketAtt {
+    id: number;
+    bank: string;
+    dateOfTicket: string;
+    about: string;
+    numTicket: string;
+    resolved: boolean;
+}
+
+export interface TicketCashflowAttributes {
+  id: number;
+  idParceiro: number;
+  phone: number;
+  proposal: string;
+  obs: string;
+  resolved: boolean;
+}

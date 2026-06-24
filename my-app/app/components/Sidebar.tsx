@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { LayoutGrid, SquarePen, ClipboardMinus, ChevronDown, Landmark, ChevronRight, Calendar, Ticket, LayoutDashboard } from 'lucide-react';
+import { Database, LayoutGrid, SquarePen, ClipboardMinus, ChevronDown, Landmark, ChevronRight, Calendar, Ticket, LayoutDashboard } from 'lucide-react';
 import axios from 'axios';
 
 interface Bank {
@@ -154,6 +154,17 @@ export default function Sidebar() {
           <div className="flex items-center gap-3">
             <ClipboardMinus size={18} className="text-purple-400" />
             <span className="text-sm font-semibold tracking-wide">Validar Relatórios</span>
+          </div>
+        </Link>
+        
+        <Link
+          href={'/auditoria'}
+          onClick={() => setIsActivate('')}
+          className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
+        >
+          <div className="flex items-center gap-3">
+            <Database  size={18} className="text-purple-400" />
+            <span className="text-sm font-semibold tracking-wide">Auditoria</span>
           </div>
         </Link>
       </nav>

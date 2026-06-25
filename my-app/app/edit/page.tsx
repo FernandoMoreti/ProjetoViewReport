@@ -111,6 +111,7 @@ function App() {
     "C6Auto",
     "C6bankComissao",
     // "C6_BANK",
+    "C6KGIRO",
     "C6Equity",
     "Caixa",
     "CAPITALCONSIGCancelados",
@@ -139,18 +140,17 @@ function App() {
     "PHtech",
     "Presenca",
     "QualiBank",
-    "SafraComissaoZeroCBU",
-    "SafraComissaoZeroCBSU",
+    "Sabemi",
+    "SafraComissaoZero",
     "SantanderFit",
     "SantanderFVEVI",
     "OLE_FVE",
     "TotalCash",
     "V8",
-    "VCtexNOVA",
-    "VCtexWL",
+    "VCtex",
     "Viacerta",
     "WebCash"
-   ]
+  ]
 
   return (
       <div className='flex flex-col h-full'>

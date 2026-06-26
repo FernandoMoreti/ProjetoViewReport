@@ -23,7 +23,7 @@ export default function DayOfWeek() {
   const [banks, setBanks] = useState<Bank[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState('');
-  const [daySelected, setDaySelected] = useState('');
+  const [filteredDayOfWeek, setFilteredDayOfWeek] = useState('');
   const [formData, setFormData] = useState({ bankId: '', time: '08:00' });
   const [bankByDay, setBankByDay] = useState<BankByDay[]>([])
 
@@ -110,14 +110,14 @@ export default function DayOfWeek() {
 
   const filteredDay = useMemo(() => {
     return bankByDay
-    .filter(bank => bank.dayOfWeek === daySelected)
+    .filter(bank => bank.dayOfWeek === filteredDayOfWeek)
     .sort((a, b) => {
       const nomeA = a.bank?.name || "";
       const nomeB = b.bank?.name || "";
       
       return nomeA.localeCompare(nomeB);
     });
-  }, [bankByDay, daySelected]);
+  }, [bankByDay, filteredDayOfWeek]);
 
   return (
     <div className="min-h-screen bg-[#1a0b2e] p-8 text-gray-100 font-sans relative">
@@ -130,7 +130,7 @@ export default function DayOfWeek() {
         </div>
         <div className="flex items-center gap-3">
           <select 
-            onChange={(e) => setDaySelected(e.target.value)} 
+            onChange={(e) => setFilteredDayOfWeek(e.target.value)} 
             name="dayFilter" 
             id="dayFilter"
             className="bg-[#1a1a1a] border border-purple-500/30 text-gray-300 p-3 rounded-xl outline-none focus:border-purple-500 hover:border-purple-500/60 transition-all cursor-pointer text-sm font-medium shadow-sm"
@@ -206,7 +206,7 @@ export default function DayOfWeek() {
           </Link>
           ))
         }
-        {daySelected ? null : daysOfWeek.map((item) => (
+        {filteredDayOfWeek ? null : daysOfWeek.map((item) => (
           <div key={item.day} className="flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]"></div>

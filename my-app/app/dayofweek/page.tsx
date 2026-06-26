@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Calendar, Clock, X, Plus, Trash2 } from 'lucide-react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -23,6 +23,7 @@ export default function DayOfWeek() {
   const [banks, setBanks] = useState<Bank[]>([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState('');
+  const [daySelected, setDaySelected] = useState('');
   const [formData, setFormData] = useState({ bankId: '', time: '08:00' });
   const [bankByDay, setBankByDay] = useState<BankByDay[]>([])
 
@@ -107,6 +108,17 @@ export default function DayOfWeek() {
     }
   }
 
+  const filteredDay = useMemo(() => {
+    return bankByDay
+    .filter(bank => bank.dayOfWeek === daySelected)
+    .sort((a, b) => {
+      const nomeA = a.bank?.name || "";
+      const nomeB = b.bank?.name || "";
+      
+      return nomeA.localeCompare(nomeB);
+    });
+  }, [bankByDay, daySelected]);
+
   return (
     <div className="min-h-screen bg-[#1a0b2e] p-8 text-gray-100 font-sans relative">
       <header className="mb-10 flex items-center justify-between">
@@ -116,13 +128,85 @@ export default function DayOfWeek() {
           </h1>
           <p className="text-gray-400 mt-2">Acompanhamento de bancos</p>
         </div>
-        <div className="bg-[#1a1a1a] p-3 rounded-xl border border-purple-500/30">
-          <Calendar className="text-purple-500" />
+        <div className="flex items-center gap-3">
+          <select 
+            onChange={(e) => setDaySelected(e.target.value)} 
+            name="dayFilter" 
+            id="dayFilter"
+            className="bg-[#1a1a1a] border border-purple-500/30 text-gray-300 p-3 rounded-xl outline-none focus:border-purple-500 hover:border-purple-500/60 transition-all cursor-pointer text-sm font-medium shadow-sm"
+          >
+            <option className="hidden text-gray-500" value="">Selecione o Dia</option>
+            <option className="bg-[#1e132f] text-gray-200" value="Segunda">Segunda</option>
+            <option className="bg-[#1e132f] text-gray-200" value="Terça">Terça</option>
+            <option className="bg-[#1e132f] text-gray-200" value="Quarta">Quarta</option>
+            <option className="bg-[#1e132f] text-gray-200" value="Quinta">Quinta</option>
+            <option className="bg-[#1e132f] text-gray-200" value="Sexta">Sexta</option>
+            <option className="bg-[#1e132f] text-purple-400 font-bold" value="">Todos os dias</option>
+          </select>
+          <div className="bg-[#1a1a1a] p-3 rounded-xl border border-purple-500/30">
+            <Calendar className="text-purple-500" />
+          </div>
         </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {daysOfWeek.map((item) => (
+        {filteredDay.map((bank, index) => (
+          <Link
+            href={`/?bank=${bank.bank?.name}`}
+            key={index}
+            className="flex items-center justify-between bg-[#1c1c1c] px-4 py-2 rounded-xl border border-gray-800 shadow-lg relative group overflow-hidden"
+          >
+              <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-200">
+                  {bank.bank?.name || 'Banco Indefinido'}
+              </span>
+              <span className="text-[12px] text-gray-500 flex items-center gap-1">
+                  <Clock size={12}/> {bank.time}
+              </span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                  <button
+                      onClick={() => handleDelete(bank.id)}
+                      className="text-gray-600 hover:text-red-500 transition-colors p-1"
+                      title="Excluir agendamento"
+                  >
+                  <Trash2 size={16} />
+                  </button>
+
+                  {!bank.bank?.reports?.[0]?.received ? (
+                    <input
+                      type="checkbox"
+                      readOnly
+                      checked={!!bank.bank?.reports?.[0]?.notreceived}
+                      className="accent-[#ff0000] w-5 h-5 cursor-default"
+                  />)
+                  : <></>
+                  }
+                  {!bank.bank?.reports?.[0]?.notreceived ? (
+                    <>
+                      <input
+                        type="checkbox"
+                        readOnly
+                        checked={!!bank.bank?.reports?.[0]?.received}
+                        className="accent-purple-500 w-5 h-5 cursor-default"
+                      />
+                      <input
+                        type="checkbox"
+                        readOnly
+                        checked={!!bank.bank?.reports?.[0]?.processed}
+                        className="accent-[#ff6b3d] w-5 h-5 cursor-default"
+                      />
+                    </>
+                  ) : <></>
+                }
+              </div>
+
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </Link>
+          ))
+        }
+        {daySelected ? null : daysOfWeek.map((item) => (
           <div key={item.day} className="flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.5)]"></div>
@@ -155,12 +239,15 @@ export default function DayOfWeek() {
                             <Trash2 size={16} />
                             </button>
 
-                            <input
+                            {!bank.bank?.reports?.[0]?.received ? (
+                              <input
                                 type="checkbox"
                                 readOnly
                                 checked={!!bank.bank?.reports?.[0]?.notreceived}
                                 className="accent-[#ff0000] w-5 h-5 cursor-default"
-                            />
+                            />)
+                            : <></>
+                            }
                             {!bank.bank?.reports?.[0]?.notreceived ? (
                               <>
                                 <input

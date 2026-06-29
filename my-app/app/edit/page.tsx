@@ -148,7 +148,8 @@ function App() {
     "OLE_FVE",
     "TotalCash",
     "V8",
-    "VCtex",
+    "VCtexNOVA",
+    "VCtexWL",
     "Viacerta",
     "WebCash"
   ]

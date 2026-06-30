@@ -80,10 +80,20 @@ function App() {
         processedAt: null
       }
 
+      let sucess;
 
-      await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
+      try {
+        await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
+        sucess = true
+      } catch(e) {
+        sucess = false        
+      }
 
-      alert("Dados salvos com sucesso!");
+      if (sucess) {
+        alert("Dados salvos com sucesso!");
+      } else {
+        alert("RELATÓRIO PRECISA SER SALVO MANUALMENTE");
+      }
       setValidar(true)
     } catch(error) {
       console.error("Erro ao enviar:", error)
@@ -107,10 +117,8 @@ function App() {
     "BRBInconta Validar",
     "BRBRed",
     "BTW",
-    "Bv",
     "C6Auto",
     "C6bankComissao",
-    // "C6_BANK",
     "C6KGIRO",
     "C6Equity",
     "Caixa",
@@ -136,6 +144,8 @@ function App() {
     "NovoSaqueCartao",
     "NYC",
     "ParanaBank",
+    "PanWlCartao",
+    "PanWlConsig",
     "PANLAFY",
     "PHtech",
     "Presenca",

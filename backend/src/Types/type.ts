@@ -33,3 +33,9 @@ export interface TicketCashflowAttributes {
   obs: string;
   resolved: boolean;
 }
+
+export interface UserAttributes {
+  username: string;
+  password: string;
+  role: string
+}

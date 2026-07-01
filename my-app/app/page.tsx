@@ -39,18 +39,6 @@ function BankContent() {
         <p className="text-purple-300/60 text-lg max-w-md mb-10 leading-relaxed">
           Selecione uma unidade bancária na barra lateral para gerenciar os relatórios processados...
         </p>
-
-        <div className="flex gap-4 px-30 opacity-80">
-          <Link
-            href={"/dayofweek"}
-            className="p-4 cursor-pointer w-50 py-10 rounded-2xl bg-white/5 border border-white/5 flex flex-col items-center transition-all duration-300 gap-2 hover:-translate-y-0.5 hover:bg-white/10"
-          >
-            <div className="w-8 h-8 rounded-lg bg-[#9823ff]/20 flex items-center justify-center">
-              <Plus size={16} className="text-[#9823ff]" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-tighter text-purple-200">Dias da Semana</span>
-          </Link>
-        </div>
       </div>
     );
   }

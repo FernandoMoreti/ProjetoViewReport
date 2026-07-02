@@ -8,6 +8,7 @@ interface notificationAttributes {
   date: string;
   notificated: boolean;
   received: boolean;
+  notReceived: boolean;
   obs: string;
   automatication: boolean;
 }
@@ -18,6 +19,7 @@ export default function EditTicket() {
   const [refreshCount, setRefreshCount] = useState(0);
   const [bankFilter, setBankFilter] = useState("");
   const [receivedFilter, setReceivedFilter] = useState<boolean | null>(null);
+  const [notReceivedFilter, setNotReceivedFilter] = useState<boolean | null>(null);
   const [notificatedFilter, setNotificatedFilter] = useState<boolean | null>(null);
   const [autoFilter, setAutoFilter] = useState<boolean | null>(null);
   const [dateFilter, setDateFilter] = useState("");
@@ -61,13 +63,14 @@ export default function EditTicket() {
     return notifications.filter((item) => {
       const matchesBank = bankFilter === "" || item.bank.toLowerCase().includes(bankFilter.toLowerCase());
       const matchesReceived = receivedFilter === null || item.received === receivedFilter;
+      const matchesNotReceived = notReceivedFilter === null || item.notReceived === notReceivedFilter;
       const matchesNotificated = notificatedFilter === null || item.notificated === notificatedFilter;
       const matchesAuto = autoFilter === null || item.automatication === autoFilter;
       const matchesDate = dateFilter === "" || item.date === dateFilter;
 
-      return matchesBank && matchesReceived && matchesNotificated && matchesAuto && matchesDate;
+      return matchesBank && matchesReceived && matchesNotReceived && matchesNotificated && matchesAuto && matchesDate;
     });
-  }, [notifications, bankFilter, receivedFilter, notificatedFilter, autoFilter, dateFilter]);
+  }, [notifications, bankFilter, receivedFilter, notReceivedFilter, notificatedFilter, autoFilter, dateFilter]);
 
 
   return (
@@ -96,6 +99,12 @@ export default function EditTicket() {
           Recebido: {receivedFilter === null ? "Todos" : receivedFilter ? "Sim" : "Não"}
         </button>
         <button
+          onClick={() => setNotReceivedFilter(prev => prev === null ? true : prev === true ? false : null)}
+          className="bg-purple-900/30 px-4 py-2 rounded-lg text-xs border border-purple-500/30"
+        >
+          Não Recebido: {notReceivedFilter === null ? "Todos" : notReceivedFilter ? "Sim" : "Não"}
+        </button>
+        <button
           onClick={() => setAutoFilter(prev => prev === null ? true : prev === true ? false : null)}
           className="bg-purple-900/30 px-4 py-2 rounded-lg text-xs border border-purple-500/30"
         >
@@ -112,6 +121,7 @@ export default function EditTicket() {
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
                   <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Notificado</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Recebido</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Não Recebido</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Obs</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Automatizado</th>
                 </tr>
@@ -135,6 +145,15 @@ export default function EditTicket() {
                         type="checkbox"
                         checked={ticket.received}
                         onChange={(e) => updateField(index, 'received', e.target.checked)}
+                        className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d] cursor-pointer"
+                      />
+                    </td>
+
+                    <td className="px-6 py-8 text-center">
+                      <input
+                        type="checkbox"
+                        checked={ticket.notReceived}
+                        onChange={(e) => updateField(index, 'notReceived', e.target.checked)}
                         className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d] cursor-pointer"
                       />
                     </td>

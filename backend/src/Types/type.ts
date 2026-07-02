@@ -40,6 +40,7 @@ export interface NotificationAtt {
   date: string;
   notificated: boolean;
   received: boolean;
+  notReceived: boolean;
   obs: string;
   automatication: boolean;
 }

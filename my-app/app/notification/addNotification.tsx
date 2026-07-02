@@ -8,6 +8,7 @@ interface NotificationAtt {
   date: string;
   notificated: boolean;
   received: boolean;
+  notReceived: boolean;
   obs: string;
   automatication: boolean;
 }
@@ -47,6 +48,7 @@ export default function AddNotification() {
       date: selectedDate,
       notificated: false,
       received: false,
+      notReceived: false,
       obs: '',
       automatication: false,
     };
@@ -132,6 +134,7 @@ export default function AddNotification() {
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
                   <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Notificado</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Recebido</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Não Recebido</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">OBS</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Automatizado</th>
                   <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center"></th>
@@ -188,6 +191,17 @@ export default function AddNotification() {
                             type="checkbox"
                             checked={notification.received}
                             onChange={(e) => updateField(index, 'received', e.target.checked)}
+                            className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
+                          />
+                        </label>
+                      </td>
+
+                      <td className="px-6 py-8">
+                        <label className="flex flex-col items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={notification.notReceived}
+                            onChange={(e) => updateField(index, 'notReceived', e.target.checked)}
                             className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
                           />
                         </label>

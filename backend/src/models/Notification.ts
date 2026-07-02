@@ -9,6 +9,7 @@ export class Notification extends Model<NotificationAtt, NotificationCreationAtt
   public date!: string;
   public notificated!: boolean;
   public received!: boolean;
+  public notReceived!: boolean;
   public obs!: string;
   public automatication!: boolean;
 }
@@ -20,6 +21,7 @@ export function initNotification(sequelize: Sequelize) {
     date: { type: DataTypes.DATEONLY, allowNull: false, unique: false },
     notificated: { type: DataTypes.BOOLEAN, defaultValue: false },
     received: { type: DataTypes.BOOLEAN, defaultValue: false },
+    notReceived: { type: DataTypes.BOOLEAN, defaultValue: false },
     obs: { type: DataTypes.STRING },
     automatication: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {

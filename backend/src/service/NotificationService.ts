@@ -18,8 +18,8 @@ class NotificationService {
     async update(notifications: any[]) {
         try {
             for (let notification of notifications) {
-                const { id, bank, date, notificated, received, obs, automatication } = notification
-                await NotificationRepository.update({ id, bank, date, notificated, received, obs, automatication })
+                const { id, bank, date, notificated, received, notReceived, obs, automatication } = notification
+                await NotificationRepository.update({ id, bank, date, notificated, received, notReceived, obs, automatication })
             }
             return 200
         } catch (error) {

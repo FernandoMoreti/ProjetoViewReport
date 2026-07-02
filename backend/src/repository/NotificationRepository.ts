@@ -25,13 +25,14 @@ export class NotificationRepository {
         }
     }
 
-    async update({ id, bank, date, notificated, received, obs, automatication }: NotificationAtt) {
+    async update({ id, bank, date, notificated, received, notReceived, obs, automatication }: NotificationAtt) {
         try {
             const newNotification = await Notification.update({
                 bank,
                 date,
                 notificated,
                 received,
+                notReceived,
                 obs,
                 automatication
             }, {

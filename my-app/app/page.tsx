@@ -1,14 +1,13 @@
 'use client'
 import { useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react"; // Importamos o Suspense
-import AddReport from "./components/addReport";
-import EditReport from "./components/editReport";
-import ViewReport from "./components/viewReport";
-import AddBank from "./components/addBank";
-import EditBank from "./components/editBank";
-import { LayoutGrid, Plus } from 'lucide-react'
-import HomeBank from "./components/homeBank";
-import Link from "next/link";
+import AddReport from "./report/addReport";
+import EditReport from "./report/editReport";
+import ViewReport from "./report/viewReport";
+import AddBank from "./bank/addBank";
+import EditBank from "./bank/editBank";
+import { LayoutGrid } from 'lucide-react'
+import HomeBank from "./bank/homeBank";
 import { TabButton } from "./components/ui/TabButton";
 
 // 1. Criamos um componente interno para gerenciar a lógica dos parâmetros

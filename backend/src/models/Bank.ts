@@ -12,6 +12,11 @@ export class Bank extends Model<BankAttributes, BankCreationAttributes> implemen
   public name!: string;
 }
 
+export class BankContestacao extends Model<BankAttributes, BankCreationAttributes> implements BankAttributes {
+  public id!: number;
+  public name!: string;
+}
+
 export function initBank(sequelize: Sequelize) {
   Bank.init({
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -19,6 +24,14 @@ export function initBank(sequelize: Sequelize) {
   }, {
     sequelize,
     tableName: 'tb_bank',
+    underscored: true
+  }),
+  BankContestacao.init({
+    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+  }, {
+    sequelize,
+    tableName: 'tb_bank_contestacao',
     underscored: true
   });
 }

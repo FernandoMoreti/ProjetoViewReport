@@ -34,6 +34,16 @@ export interface TicketCashflowAttributes {
   resolved: boolean;
 }
 
+export interface NotificationAtt {
+  id: number;
+  bank: string;
+  date: string;
+  notificated: boolean;
+  received: boolean;
+  obs: string;
+  automatication: boolean;
+}
+
 export interface UserAttributes {
   username: string;
   password: string;

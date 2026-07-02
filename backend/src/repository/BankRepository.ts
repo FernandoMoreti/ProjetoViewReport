@@ -1,4 +1,4 @@
-import { Bank } from "../models"
+import { Bank, BankContestacao } from "../models"
 
 interface BankAtt {
     id: number
@@ -9,6 +9,18 @@ export class BankRepository {
     async getAll() {
         try {
             return Bank.findAll({
+                order: [
+                    ['name', 'ASC']
+                ]
+            })
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async getAllBankNotification() {
+        try {
+            return BankContestacao.findAll({
                 order: [
                     ['name', 'ASC']
                 ]
@@ -48,6 +60,20 @@ export class BankRepository {
             }
 
             const newBank = await Bank.bulkCreate(name)
+            return newBank
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async createBankNotification(name: any[]) {
+        try {
+
+            if (!name || name.length === 0) {
+                throw new Error("Nenhum dado fornecido para inserção.");
+            }
+
+            const newBank = await BankContestacao.bulkCreate(name)
             return newBank
         } catch (error) {
             throw error

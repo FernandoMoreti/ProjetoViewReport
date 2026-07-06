@@ -44,25 +44,41 @@ function App() {
 
 
     try {
-      const response = await fetch("https://flask-backend-ipg8.onrender.com/execute", {
+      const response = await fetch("http://127.0.0.1:5000/execute", {
         method: "POST",
         body: formData,
       })
 
       if (!response.ok) throw new Error("Erro no processamento do arquivo");
 
-      const [blob, bank] = await Promise.all([
-        response.blob(),
-        findBank(banco)
-      ]);
+      const responseData = await response.json()
+      const bank = await findBank(banco);
 
       if (bank == "Banco não localizado") {
         throw new Error(`Banco '${banco}' não esta mapeado no sistema.`);
       }
 
-      const disposition = response.headers.get("content-disposition");
-      const filename = extractFilename(disposition) || "arquivo.xlsx";
+      const listOfProposal = responseData.listOfProposal;
+      try {
+        const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
 
+        if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
+
+      } catch (e) {
+        throw new Error("Erro ao salvar propostas no banco de dados: " + e)
+      }
+
+      const byteCharacters = atob(responseData.arquivo_base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { 
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+      });
+
+      const filename = responseData.nome_arquivo || "arquivo.xlsx";
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -80,20 +96,9 @@ function App() {
         processedAt: null
       }
 
-      let sucess;
+      await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
 
-      try {
-        await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
-        sucess = true
-      } catch(e) {
-        sucess = false        
-      }
-
-      if (sucess) {
-        alert("Dados salvos com sucesso!");
-      } else {
-        alert("RELATÓRIO PRECISA SER SALVO MANUALMENTE");
-      }
+      alert("Dados salvos com sucesso!");
       setValidar(true)
     } catch(error) {
       console.error("Erro ao enviar:", error)
@@ -117,9 +122,10 @@ function App() {
     "BRBInconta Validar",
     "BRBRed",
     "BTW",
+    "Bv",
     "C6Auto",
     "C6bankComissao",
-    "C6KGIRO",
+    // "C6_BANK",
     "C6Equity",
     "Caixa",
     "CAPITALCONSIGCancelados",
@@ -144,13 +150,10 @@ function App() {
     "NovoSaqueCartao",
     "NYC",
     "ParanaBank",
-    "PanWlCartao",
-    "PanWlConsig",
     "PANLAFY",
     "PHtech",
     "Presenca",
     "QualiBank",
-    "Sabemi",
     "SafraComissaoZeroCBU",
     "SafraComissaoZeroCBSU",
     "SantanderFit",
@@ -162,7 +165,7 @@ function App() {
     "VCtexWL",
     "Viacerta",
     "WebCash"
-  ]
+   ]
 
   return (
       <div className='flex flex-col h-full'>

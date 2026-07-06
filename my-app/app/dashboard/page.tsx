@@ -80,7 +80,6 @@ export default function Dashboard() {
       setReportsProcessed([])
       setReportsReceived([])
       try {
-
         const response = await axios.post("http://192.168.1.90:30000/reports/date", {
           bank: "Todos os Bancos", date: initialDate, dateFinal: initialDate
         })

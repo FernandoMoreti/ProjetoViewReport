@@ -41,7 +41,7 @@ export default function Dashboard() {
     async function fetchData() {
       setLoading(true)
       try {
-        const response = await axios.get("http://localhost:3003/proposal", {
+        const response = await axios.get("http://192.168.1.90:30000/proposal", {
           params: { startDate: initialDate, finalDate: finalDate }
         })
         const mockData = response.data.length > 0 ? response.data : [

@@ -37,12 +37,6 @@ export default function EditTicket() {
     getNotifications();
   }, [refreshCount]);
 
-  const updateField = (index: number, field: keyof notificationAttributes, value: string | number | boolean) => {
-    const updated = [...notifications];
-    updated[index] = { ...updated[index], [field]: value };
-    setNotifications(updated);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
@@ -72,6 +66,17 @@ export default function EditTicket() {
     });
   }, [notifications, bankFilter, receivedFilter, notReceivedFilter, notificatedFilter, autoFilter, dateFilter]);
 
+  const updateField = (notificationToUpdate: notificationAttributes, field: keyof notificationAttributes, value: string | number | boolean) => {
+    const index = notifications.findIndex(t =>
+      t.date === notificationToUpdate.date && t.bank === notificationToUpdate.bank // Exemplo usando chaves únicas
+    );
+
+    if (index !== -1) {
+      const updated = [...notifications];
+      updated[index] = { ...updated[index], [field]: value };
+      setNotifications(updated);
+    }
+  };
 
   return (
     <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
@@ -127,15 +132,15 @@ export default function EditTicket() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-purple-900/10 bg-[#1a0b2e]/40">
-                {filteredNotifications.map((ticket, index) => (
+                {filteredNotifications.map((notification, index) => (
                   <tr key={index} className="animate-in fade-in duration-300">
-                    <td className="px-6 py-8 text-center text-sm">{ticket.date?.split('-').reverse().join('/')}</td>
-                    <td className="px-6 py-8 text-center text-sm font-bold">{ticket.bank}</td>
+                    <td className="px-6 py-8 text-center text-sm">{notification.date?.split('-').reverse().join('/')}</td>
+                    <td className="px-6 py-8 text-center text-sm font-bold">{notification.bank}</td>
                     <td className="px-6 py-8 text-center">
                       <input
                         type="checkbox"
-                        checked={ticket.notificated}
-                        onChange={(e) => updateField(index, 'notificated', e.target.checked)}
+                        checked={notification.notificated}
+                        onChange={(e) => updateField(notification, 'notificated', e.target.checked)}
                         className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d] cursor-pointer"
                       />
                     </td>
@@ -143,8 +148,8 @@ export default function EditTicket() {
                     <td className="px-6 py-8 text-center">
                       <input
                         type="checkbox"
-                        checked={ticket.received}
-                        onChange={(e) => updateField(index, 'received', e.target.checked)}
+                        checked={notification.received}
+                        onChange={(e) => updateField(notification, 'received', e.target.checked)}
                         className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d] cursor-pointer"
                       />
                     </td>
@@ -152,8 +157,8 @@ export default function EditTicket() {
                     <td className="px-6 py-8 text-center">
                       <input
                         type="checkbox"
-                        checked={ticket.notReceived}
-                        onChange={(e) => updateField(index, 'notReceived', e.target.checked)}
+                        checked={notification.notReceived}
+                        onChange={(e) => updateField(notification, 'notReceived', e.target.checked)}
                         className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d] cursor-pointer"
                       />
                     </td>
@@ -161,8 +166,8 @@ export default function EditTicket() {
                     <td className="px-4 py-8 text-center text-sm">
                       <input
                         type="text"
-                        value={ticket.obs}
-                        onChange={(e) => updateField(index, 'obs', e.target.value)}
+                        value={notification.obs}
+                        onChange={(e) => updateField(notification, 'obs', e.target.value)}
                         className="w-auto p-1 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
                       />
                     </td>
@@ -170,8 +175,8 @@ export default function EditTicket() {
                     <td className="px-6 py-8 text-center">
                       <input
                         type="checkbox"
-                        checked={ticket.automatication}
-                        onChange={(e) => updateField(index, 'automatication', e.target.checked)}
+                        checked={notification.automatication}
+                        onChange={(e) => updateField(notification, 'automatication', e.target.checked)}
                         className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d] cursor-pointer"
                       />
                     </td>

@@ -1,0 +1,187 @@
+'use client'
+import { useEffect, useState, useMemo } from "react";
+import { Calendar } from 'lucide-react';
+import axios from "axios";
+
+interface notificationAttributes {
+  bank: string;
+  date: string;
+  notificated: boolean;
+  received: boolean;
+  notReceived: boolean;
+  obs: string;
+  automatication: boolean;
+}
+
+export default function ViewTicket() {
+  const [notifications, setNotifications] = useState<notificationAttributes[]>([]);
+
+  const [bankFilter, setBankFilter] = useState("");
+  const [receivedFilter, setReceivedFilter] = useState<boolean | null>(null);
+  const [notReceivedFilter, setNotReceivedFilter] = useState<boolean | null>(null);
+  const [notificatedFilter, setNotificatedFilter] = useState<boolean | null>(null);
+  const [autoFilter, setAutoFilter] = useState<boolean | null>(null);
+  const [dateFilter, setDateFilter] = useState("");
+
+  useEffect(() => {
+    async function getNotification() {
+      try {
+        const response = await axios.get("http://192.168.1.90:30000/notification");
+        console.log(response.data);
+        setNotifications(Array.isArray(response.data) ? response.data : [response.data].filter(Boolean));
+      } catch (error) {
+        console.error("Erro ao buscar Notificações:", error);
+      }
+    }
+    getNotification();
+  }, []);
+
+  const filteredNotifications = useMemo(() => {
+    return notifications.filter((item) => {
+      const matchesBank = bankFilter === "" || item.bank.toLowerCase().includes(bankFilter.toLowerCase());
+      const matchesReceived = receivedFilter === null || item.received === receivedFilter;
+      const matchesNotReceived = notReceivedFilter === null || item.notReceived === notReceivedFilter;
+      const matchesNotificated = notificatedFilter === null || item.notificated === notificatedFilter;
+      const matchesAuto = autoFilter === null || item.automatication === autoFilter;
+      const matchesDate = dateFilter === "" || item.date === dateFilter;
+
+      return matchesBank && matchesReceived && matchesNotReceived && matchesNotificated && matchesAuto && matchesDate;
+    });
+  }, [notifications, bankFilter, receivedFilter, notReceivedFilter, notificatedFilter, autoFilter, dateFilter]);
+
+  return (
+    <section className="flex flex-col bg-[#1a0b2e] min-h-screen p-6 text-white">
+      <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="w-full max-w-5xl mx-auto mb-6 flex gap-4 flex-wrap">
+          <input
+            type="date"
+            className="bg-purple-900/30 text-white p-2 rounded-lg border border-purple-500/30 text-sm"
+            onChange={(e) => setDateFilter(e.target.value)}
+          />
+          <input
+            placeholder="Filtrar por banco..."
+            className="bg-purple-900/20 border border-purple-500/30 p-2 rounded-lg text-sm"
+            onChange={(e) => setBankFilter(e.target.value)}
+          />
+          <button
+            onClick={() => setNotificatedFilter(prev => prev === null ? true : prev === true ? false : null)}
+            className="bg-purple-900/30 px-4 py-2 rounded-lg text-xs border border-purple-500/30"
+          >
+            Notificado: {notificatedFilter === null ? "Todos" : notificatedFilter ? "Sim" : "Não"}
+          </button>
+          <button
+            onClick={() => setReceivedFilter(prev => prev === null ? true : prev === true ? false : null)}
+            className="bg-purple-900/30 px-4 py-2 rounded-lg text-xs border border-purple-500/30"
+          >
+            Recebido: {receivedFilter === null ? "Todos" : receivedFilter ? "Sim" : "Não"}
+          </button>
+          <button
+            onClick={() => setNotReceivedFilter(prev => prev === null ? true : prev === true ? false : null)}
+            className="bg-purple-900/30 px-4 py-2 rounded-lg text-xs border border-purple-500/30"
+          >
+            Não Recebido: {notReceivedFilter === null ? "Todos" : notReceivedFilter ? "Sim" : "Não"}
+          </button>
+          <button
+            onClick={() => setAutoFilter(prev => prev === null ? true : prev === true ? false : null)}
+            className="bg-purple-900/30 px-4 py-2 rounded-lg text-xs border border-purple-500/30"
+          >
+            Automatizado: {autoFilter === null ? "Todos" : autoFilter ? "Sim" : "Não"}
+          </button>
+        </div>
+        <div className="bg-[#1a0b2e]/60 backdrop-blur-xl border border-purple-900/30 rounded-3xl p-1 shadow-2xl">
+          <div className="overflow-hidden rounded-[22px]">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-purple-900/20 border-b border-purple-900/10">
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Data Notificação</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Banco</th>
+                  <th className="px-4 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Notificado</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Recebido</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Não Recebido</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Obs</th>
+                  <th className="px-6 py-5 text-xs font-bold text-purple-300 uppercase tracking-[0.2em] text-center">Automatizado</th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-purple-900/10 bg-[#1a0b2e]/40">
+                {filteredNotifications.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-20 text-center text-purple-500/50 italic text-sm">
+                      Nenhuma notificação encontrada.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredNotifications.map((item, index) => {
+                      const ticket = item as notificationAttributes;
+                      return (
+                        <tr key={index} className="animate-in fade-in duration-300">
+                          <td className="px-6 py-8">
+                            <div className="flex justify-center gap-2 text-sm text-white">
+                              <Calendar size={18} className="text-purple-500" />
+                              <p className="text-sm">{ticket.date?.split('-').reverse().join('/')}</p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-8">
+                            <div className="flex items-center justify-center gap-2 text-sm font-bold text-white">
+                              {ticket.bank}
+                            </div>
+                          </td>
+                          <td className="px-6 py-8">
+                            <label className="flex flex-col items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                readOnly
+                                checked={ticket.notificated || false}
+                                className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
+                              />
+                            </label>
+                          </td>
+                          <td className="px-6 py-8">
+                            <label className="flex flex-col items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                readOnly
+                                checked={ticket.received || false}
+                                className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
+                              />
+                            </label>
+                          </td>
+                          <td className="px-6 py-8">
+                            <label className="flex flex-col items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                readOnly
+                                checked={ticket.notReceived || false}
+                                className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
+                              />
+                            </label>
+                          </td>
+                          <td className="px-4">
+                            <div className="flex justify-center text-sm text-white max-w-50 mx-auto">
+                              <p className="truncate" title={ticket.obs}>
+                                {ticket.obs}
+                              </p>
+                            </div>
+                          </td>
+                          <td className="px-6 py-8">
+                            <label className="flex flex-col items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                readOnly
+                                checked={ticket.automatication || false}
+                                className="w-6 h-6 rounded border-purple-500/20 bg-[#0f081a] accent-[#ff6b3d]"
+                              />
+                            </label>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

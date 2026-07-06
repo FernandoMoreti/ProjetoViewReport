@@ -22,7 +22,7 @@ class ValidatorService {
                 }
 
                 if (valorLocalizado) {
-                    if (!grupos[valorLocalizado]) {      
+                    if (!grupos[valorLocalizado]) {
                             grupos[valorLocalizado] = []
                             grupos[valorLocalizado]!.push(report)
                     } else {
@@ -47,9 +47,8 @@ class ValidatorService {
             for (let day of listDaysOfWeek.resultado) {
                 for (let bank of Object.keys(times_for_day)) {
 
-                    
                     const dataBank = (times_for_day as any)[bank];
-                    
+
                     const value = dataBank[day];
 
                     if (typeof value === 'string') {
@@ -75,7 +74,6 @@ class ValidatorService {
                         min = value
                         max = value
                     }
-                    
                     minExpected += min
                     maxExpected += max
 
@@ -100,7 +98,6 @@ class ValidatorService {
             maxExpected += listDaysOfWeek.qtnDia30
 
             return { grupos, minExpected, maxExpected, expectedByBank }
-            
         } catch (e) {
             console.error(e)
         }

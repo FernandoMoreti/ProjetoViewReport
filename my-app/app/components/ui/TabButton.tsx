@@ -2,7 +2,7 @@ export function TabButton({ label, active, onClick }: { label: string, active: b
   return (
     <button
       onClick={onClick}
-      className={`pb-2 text-sm font-bold uppercase tracking-widest transition-all relative ${
+      className={`text-sm font-bold uppercase tracking-widest transition-all relative ${
         active ? 'text-[#9823ff]' : 'text-purple-400/40 hover:text-purple-300'
       }`}
     >

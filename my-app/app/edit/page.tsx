@@ -57,17 +57,17 @@ function App() {
       if (bank == "Banco não localizado") {
         throw new Error(`Banco '${banco}' não esta mapeado no sistema.`);
       }
-      
+
       const listOfProposal = responseData.listOfProposal;
       try {
-        const responseProposals = await axios.post("http://localhost:3003/proposal", listOfProposal)
+        const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
 
         if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
 
       } catch (e) {
         throw new Error("Erro ao salvar propostas no banco de dados: " + e)
       }
-      
+
       const byteCharacters = atob(responseData.arquivo_base64);
       const byteNumbers = new Array(byteCharacters.length);
       for (let i = 0; i < byteCharacters.length; i++) {
@@ -96,7 +96,7 @@ function App() {
         processedAt: null
       }
 
-      await axios.post("http://localhost:3003/reports", { bank, reports: [report] });
+      await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
 
       alert("Dados salvos com sucesso!");
       setValidar(true)

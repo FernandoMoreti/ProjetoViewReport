@@ -1,17 +1,21 @@
 import sequelize from '../config/db';
-import { Bank, initBank } from './Bank';
+import { Bank, BankContestacao, initBank } from './Bank';
 import { initTicketCashflow, TicketCashflow } from './Cashflow';
 import { initReport, Report } from './Report';
 import { initDay, Schedule } from './Schedules';
 import { initTicket, Ticket } from './Ticket';
 import { initProposal, Proposal } from './Proposal';
+import { initUser, User } from './User';
+import { initNotification, Notification } from './Notification';
 
 initReport(sequelize);
 initBank(sequelize);
 initDay(sequelize);
 initTicket(sequelize)
+initNotification(sequelize)
 initTicketCashflow(sequelize)
 initProposal(sequelize)
+initUser(sequelize);
 
 Bank.hasMany(Report, {
     foreignKey: 'bankId',
@@ -33,5 +37,5 @@ Schedule.belongsTo(Bank, {
     as: 'bank'
 });
 
-export { sequelize, Bank, Report, Schedule, Ticket, TicketCashflow, Proposal };
+export { sequelize, Bank, Report, Schedule, Ticket, TicketCashflow, User, Proposal, Notification, BankContestacao };
 export default sequelize;

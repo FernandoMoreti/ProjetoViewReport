@@ -33,7 +33,6 @@ export interface TicketCashflowAttributes {
   obs: string;
   resolved: boolean;
 }
-
 export interface ProposalAttriibutes {
   id: number;
   bank: string;
@@ -46,4 +45,21 @@ export interface ProposalAttriibutes {
   duplicate: boolean;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface NotificationAtt {
+  id: number;
+  bank: string;
+  date: string;
+  notificated: boolean;
+  received: boolean;
+  notReceived: boolean;
+  obs: string;
+  automatication: boolean;
+}
+
+export interface UserAttributes {
+  username: string;
+  password: string;
+  role: string
 }

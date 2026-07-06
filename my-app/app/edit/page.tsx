@@ -44,6 +44,7 @@ function App() {
 
 
     try {
+
       const response = await fetch("http://192.168.1.90:5000/execute", {
         method: "POST",
         body: formData,
@@ -59,6 +60,7 @@ function App() {
       }
 
       const listOfProposal = responseData.listOfProposal;
+      console.log(listOfProposal)
       try {
         const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
 
@@ -74,7 +76,7 @@ function App() {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], { 
+      const blob = new Blob([byteArray], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
       });
 

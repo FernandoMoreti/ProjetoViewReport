@@ -172,7 +172,7 @@ export default function Sidebar() {
       }
       {userRole === 'CONTROLADORIA' || userRole === 'ADMIN' ? (
         <Link
-          href={'/edit'}
+          href={'/auditoria'}
           onClick={() => setIsActivate('')}
           className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-white/5 text-purple-100 transition-all duration-200 group"
         >

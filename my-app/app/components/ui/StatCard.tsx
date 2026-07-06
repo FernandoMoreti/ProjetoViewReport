@@ -1,4 +1,13 @@
-export const StatCard = ({ title, value, subtitle, icon: Icon, colorClass, shadowColor }) => (
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  subtitle: string;
+  icon: React.ElementType;
+  colorClass: string;
+  shadowColor: string;
+}
+
+export const StatCard = ({ title, value, subtitle, icon: Icon, colorClass, shadowColor }: StatCardProps) => (
   <div className={`bg-white/5 border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 ${shadowColor}`}>
     <div className="flex justify-between items-start">
       <div>

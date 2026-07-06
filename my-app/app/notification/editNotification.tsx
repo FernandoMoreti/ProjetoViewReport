@@ -4,6 +4,7 @@ import { Loader } from 'lucide-react';
 import axios from "axios";
 
 interface notificationAttributes {
+  id: number;
   bank: string;
   date: string;
   notificated: boolean;
@@ -68,7 +69,7 @@ export default function EditTicket() {
 
   const updateField = (notificationToUpdate: notificationAttributes, field: keyof notificationAttributes, value: string | number | boolean) => {
     const index = notifications.findIndex(t =>
-      t.date === notificationToUpdate.date && t.bank === notificationToUpdate.bank // Exemplo usando chaves únicas
+      t.id === notificationToUpdate.id
     );
 
     if (index !== -1) {

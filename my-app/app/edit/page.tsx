@@ -133,6 +133,8 @@ function App() {
     "CAPITALCONSIGComissao",
     "CAPITALCONSIGSeguro",
     "ComissaoZerada",
+    "Crefaz",
+    "CrefazCLT",
     "Digio",
     "EmpresteiCred",
     "Euro",

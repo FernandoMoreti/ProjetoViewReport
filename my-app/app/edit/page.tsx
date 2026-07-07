@@ -60,7 +60,6 @@ function App() {
       }
 
       const listOfProposal = responseData.listOfProposal;
-      console.log(listOfProposal)
       try {
         const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
 
@@ -158,6 +157,7 @@ function App() {
     "QualiBank",
     "SafraComissaoZeroCBU",
     "SafraComissaoZeroCBSU",
+    "SafraDebitos",
     "SantanderFit",
     "SantanderFVEVI",
     "OLE_FVE",

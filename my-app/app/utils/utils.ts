@@ -62,6 +62,7 @@ const map: Record<string, string> = {
   "Sabemi": "SABEMI",
   "SafraComissaoZeroCBU": "SAFRA CBU (37)",
   "SafraComissaoZeroCBSU": "SAFRA CBSU (72)",
+  "SafraDebitos": "SAFRA CBSU (72)",
   "SantanderFit": "SANTANDER FIT ENERG",
   "SantanderFVEVI": "SANTANDER FVE",
   "OLE_FVE": "SANTANDER OLE",

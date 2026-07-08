@@ -76,7 +76,7 @@ function App() {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       });
 
       const filename = responseData.nome_arquivo || "arquivo.xlsx";
@@ -135,6 +135,12 @@ function App() {
     "ComissaoZerada",
     "Crefaz",
     "CrefazCLT",
+    // "CrefisaJN",
+    // "CrefisaWL",
+    "Daycoval Cartao",
+    "Daycoval Cartao EX",
+    "Daycoval Consig",
+    "Daycoval Consig EX",
     "Digio",
     "EmpresteiCred",
     "Euro",

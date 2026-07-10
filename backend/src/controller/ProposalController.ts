@@ -35,8 +35,6 @@ class ProposalController {
         console.log("ROTAS: Entrei no método Create Proposta")
         const proposals = req.body
 
-        console.log(proposals)
-
         if (!proposals) {
             console.log("Nenhuma proposta foi enviado")
             res.status(400).json({ "Error": "Não recebemos nenhuma propsota" })

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import logo from "../../public/logo.jpg"
 import Image from 'next/image';
 import axios from 'axios';
-import { findBank, extractFilename } from '../utils/utils'
+import { findBank } from '../utils/utils'
 
 interface ReportAttributes {
   dateOfReport: string;
@@ -41,7 +41,6 @@ function App() {
     const formData = new FormData();
     formData.append("banco", banco)
     formData.append("arquivo", file)
-
 
     try {
 
@@ -169,6 +168,7 @@ function App() {
     "PHtech",
     "Presenca",
     "QualiBank",
+    "Quero Mais Cartao",
     "Safra Comissao Zero CBU",
     "Safra Comissao Zero CBSU",
     "Safra Debitos",
@@ -181,7 +181,7 @@ function App() {
     "VCtex WL",
     "Viacerta",
     "WebCash"
-   ]
+  ]
 
   return (
       <div className='flex flex-col h-full'>

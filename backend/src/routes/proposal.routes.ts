@@ -4,6 +4,7 @@ import ProposalController from "../controller/ProposalController";
 const route = Router()
 
 route.get("/", ProposalController.getAll)
+route.get("/excel", ProposalController.getExcel)
 route.post("/", ProposalController.create)
 route.post("/findByBank", ProposalController.getByBank)
 

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import ProposalService from '../service/ProposalService';
+import { createExcel } from '../utils/utils';
 
 class ProposalController {
     async getAll(req: Request, res: Response) {
@@ -12,10 +13,36 @@ class ProposalController {
         }
 
         try {
-            const banks = await ProposalService.getAll(startDate, finalDate)
-            return res.status(200).json(banks)
-        } catch (error) {
-            throw error
+            const proposals = await ProposalService.getAll(startDate, finalDate)
+
+            return res.status(200).json(proposals)
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async getExcel(req: Request, res: Response) {
+
+        const startDate = req.query.startDate as string;
+        const finalDate = req.query.finalDate as string;
+
+        if (!startDate || !finalDate) {
+            return res.status(400).json({ error: "Datas são obrigatórias" });
+        }
+
+        try {
+            const proposals = await ProposalService.getAll(startDate, finalDate)
+            const buffer = await createExcel(proposals)
+
+            res.setHeader(
+                'Content-Type',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            );
+            res.setHeader('Content-Disposition', 'attachment; filename=propostas.xlsx');
+
+            return res.status(200).send(buffer)
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
         }
     }
 

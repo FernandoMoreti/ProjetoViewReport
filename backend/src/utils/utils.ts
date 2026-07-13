@@ -1,5 +1,7 @@
 import { read, utils } from 'xlsx';
 import { BANCOS_CONHECIDOS } from '../config/DePara/DePara';
+import { ProposalAttriibutes } from '../Types/type';
+import exceljs from 'exceljs'
 
 export const getCurrentDayOfWeek = (dateOfReport: string): string => {
   const days = [
@@ -77,4 +79,25 @@ export function getDaysByWeek(initialDate: string, finalDate: string) {
   }
 
   return { resultado, qtnDia15, qtnDia30 }
+}
+
+export async function createExcel(listOfProposal: ProposalAttriibutes[]) {
+  const workbook = new exceljs.Workbook()
+  const worksheet = workbook.addWorksheet("Auditoria")
+
+  worksheet.columns = [
+    { header: 'Banco', key: 'bank', width: 20},
+    { header: 'Proposta', key: 'proposal', width: 20},
+    { header: 'Data de pagamento', key: 'date', width: 20},
+    { header: 'Tipo de comissão', key: 'typeCommission', width: 20},
+    { header: 'Valor Base', key: 'valBase', width: 20},
+    { header: 'Valor de comissão', key: 'valCommission', width: 20},
+    { header: 'Porcentagem comissão', key: 'pclCommission', width: 20},
+    { header: 'Esta duplicada?', key: 'duplicate', width: 20},
+  ]
+
+  worksheet.addRows(listOfProposal)
+
+  return workbook.xlsx.writeBuffer();
+
 }

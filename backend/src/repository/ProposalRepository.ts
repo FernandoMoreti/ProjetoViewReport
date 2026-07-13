@@ -9,6 +9,7 @@ export class ProposalRepository {
 
         try {
             return Proposal.findAll({
+                raw: true,
                 where: {
                     created_at: {
                         [Op.gte]: new Date(startDate),

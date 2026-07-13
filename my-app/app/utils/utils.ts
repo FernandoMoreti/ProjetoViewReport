@@ -61,7 +61,7 @@ const map: Record<string, string> = {
   "Novo Saque": "NOVO SAQUE",
   "Novo Saque Cartao": "NOVO SAQUE",
   "NYC": "NYC",
-  "ParanaBank": "PARANÁ BANK",
+  "Parana Bank": "PARANÁ BANK",
   "Pan Wl Consig": "PAN WL",
   "Pan Wl Cartao": "PAN WL",
   "PAN LAFY": "PAN LAFY",

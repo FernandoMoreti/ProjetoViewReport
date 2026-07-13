@@ -1,13 +1,14 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, MouseEvent } from 'react'
 import { StatCard } from '../components/ui/StatCard'
 import axios from 'axios'
-import { 
-  Calendar, CheckCircle2, DollarSign, Activity, 
-  TrendingUp, Search, Filter, Building2, FileText 
+import {
+  Calendar, CheckCircle2, DollarSign, Activity,
+  TrendingUp, Search, Filter, Building2, FileText,
+  Download
 } from 'lucide-react'
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, 
   ResponsiveContainer
 } from 'recharts'
@@ -80,6 +81,28 @@ export default function Dashboard() {
     }
   }, [filteredData])
 
+  async function handleDownload(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+
+    try {
+      const response = await axios.get("http://192.168.1.90:30000/proposal/excel", {
+        params: { startDate: initialDate, finalDate: finalDate },
+        responseType: 'blob'
+      })
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'propostas.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+    } catch (error) {
+      console.error("Erro no download:", error);
+    }
+  }
+
   const duplicateData = useMemo(() => {
     const proposalCounts = data.reduce((acc, curr) => {
       const key = `${curr.proposal}|${curr.typeCommission}`;
@@ -103,7 +126,7 @@ export default function Dashboard() {
     });
   }, [data]);
 
-  const formatCurrency = (val: number) => 
+  const formatCurrency = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)
 
   const chartDataBank = useMemo(() => {
@@ -150,9 +173,9 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-300/50" size={18} />
-            <input 
-              type="text" 
-              placeholder="Buscar por Proposta..." 
+            <input
+              type="text"
+              placeholder="Buscar por Proposta..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white focus:outline-none focus:border-purple-400"
@@ -161,7 +184,7 @@ export default function Dashboard() {
           <div className="flex gap-4 w-full md:w-auto">
             <div className="relative w-full md:w-48">
               <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-300/50" size={18} />
-              <select 
+              <select
                 value={selectedBank} onChange={(e) => setSelectedBank(e.target.value)}
                 className="w-full bg-[#1a0b2e] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white appearance-none focus:outline-none focus:border-purple-400"
               >
@@ -170,13 +193,16 @@ export default function Dashboard() {
             </div>
             <div className="relative w-full md:w-48">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-purple-300/50" size={18} />
-              <select 
+              <select
                 value={selectedType} onChange={(e) => setSelectedType(e.target.value)}
                 className="w-full bg-[#1a0b2e] border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white appearance-none focus:outline-none focus:border-purple-400"
               >
                 {commissionTypes.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
+            <button onClick={(e) => handleDownload(e)} className="flex relative w-10 border border-white/10 rounded-xl py-3 duration-300 hover:-translate-y-1 justify-center px-10">
+              <Download className="absolute top-1/2 -translate-y-1/2 text-purple-300/50" size={18} />
+            </button>
           </div>
         </div>
 

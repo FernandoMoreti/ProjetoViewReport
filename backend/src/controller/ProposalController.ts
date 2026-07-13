@@ -40,7 +40,14 @@ class ProposalController {
             res.status(400).json({ "Error": "Não recebemos nenhuma propsota" })
         }
 
-        const newBank = await ProposalService.create(proposals)
+        const batchSize = 200;
+        let newBank = []
+        for (let i = 0; i < proposals.length; i += batchSize) {
+            const batch = proposals.slice(i, i + batchSize);
+            let proposal = await ProposalService.create(batch)
+            newBank.push(proposal)
+        }
+
         return res.status(200).json(newBank)
     }
 }

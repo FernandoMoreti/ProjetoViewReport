@@ -23,7 +23,7 @@ class ProposalService {
                 proposal.duplicate = await ProposalRepository.isDuplicate(proposal.proposal, proposal.typeCommission)
             }
 
-            const newProposals = await ProposalRepository.create(proposals)    
+            const newProposals = await ProposalRepository.create(proposals)
             return newProposals
         } catch (e) {
             console.log('Validado um erro do tipo: ', e)

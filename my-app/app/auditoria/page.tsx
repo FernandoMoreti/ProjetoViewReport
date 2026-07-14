@@ -71,7 +71,18 @@ export default function Dashboard() {
   }, [data, searchTerm, selectedBank, selectedType])
 
   const stats = useMemo(() => {
-    const totalBase = filteredData.reduce((acc, curr) => acc + curr.valBase, 0)
+    const hashs = new Set<string>();
+    const totalBase = filteredData.reduce((acc, curr) => {
+
+      const hash = curr.proposal
+
+      if (!hashs.has(hash)) {
+        hashs.add(hash)
+        return acc + curr.valBase
+      }
+
+      return acc
+    }, 0)
     const totalCommission = filteredData.reduce((acc, curr) => acc + curr.valCommission, 0)
     return {
       count: filteredData.length,
@@ -104,7 +115,7 @@ export default function Dashboard() {
   }
 
   const duplicateData = useMemo(() => {
-    const proposalCounts = data.reduce((acc, curr) => {
+    const proposalCounts = filteredData.reduce((acc, curr) => {
       const key = `${curr.proposal}|${curr.typeCommission}`;
       acc[key] = (acc[key] || 0) + 1;
 
@@ -113,7 +124,7 @@ export default function Dashboard() {
 
     const seenProposal = new Set();
 
-    return data.filter(item => {
+    return filteredData.filter(item => {
       const key = `${item.proposal}|${item.typeCommission}`;
 
       if (proposalCounts[key] > 1) {
@@ -124,7 +135,7 @@ export default function Dashboard() {
       }
       return false;
     });
-  }, [data]);
+  }, [filteredData]);
 
   const formatCurrency = (val: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val)

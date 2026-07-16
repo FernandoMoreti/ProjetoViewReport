@@ -7,6 +7,7 @@ import { initTicket, Ticket } from './Ticket';
 import { initProposal, Proposal } from './Proposal';
 import { initUser, User } from './User';
 import { initNotification, Notification } from './Notification';
+import { initLiberationCashflow, LiberationCashflow } from './LiberationCashflow';
 
 initReport(sequelize);
 initBank(sequelize);
@@ -16,6 +17,7 @@ initNotification(sequelize)
 initTicketCashflow(sequelize)
 initProposal(sequelize)
 initUser(sequelize);
+initLiberationCashflow(sequelize);
 
 Bank.hasMany(Report, {
     foreignKey: 'bankId',
@@ -37,5 +39,5 @@ Schedule.belongsTo(Bank, {
     as: 'bank'
 });
 
-export { sequelize, Bank, Report, Schedule, Ticket, TicketCashflow, User, Proposal, Notification, BankContestacao };
+export { sequelize, Bank, Report, Schedule, Ticket, TicketCashflow, User, Proposal, Notification, BankContestacao, LiberationCashflow };
 export default sequelize;

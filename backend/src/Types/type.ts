@@ -25,6 +25,14 @@ export interface TicketAtt {
     resolved: boolean;
 }
 
+export interface LiberationAtt {
+    id: number
+    agent: string
+    obs: string
+    resolved: boolean
+    phone: string
+}
+
 export interface TicketCashflowAttributes {
   id: number;
   idParceiro: number;

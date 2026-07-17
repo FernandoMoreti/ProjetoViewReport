@@ -5,6 +5,7 @@ interface LiberationCashflowAttributes {
   agent: string;
   obs: string;
   resolved: boolean;
+  phone: string;
 }
 
 export interface LiberationCashflowCreationAttributes extends Optional<LiberationCashflowAttributes, 'id'> {}
@@ -14,6 +15,7 @@ export class LiberationCashflow extends Model<LiberationCashflowAttributes, Libe
   public agent!: string;
   public obs!: string;
   public resolved!: boolean;
+  public phone!: string;
 }
 export function initLiberationCashflow(sequelize: Sequelize) {
   LiberationCashflow.init({
@@ -21,6 +23,7 @@ export function initLiberationCashflow(sequelize: Sequelize) {
     agent: { type: DataTypes.STRING, allowNull: false },
     obs: { type: DataTypes.STRING, allowNull: true },
     resolved: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    phone: { type: DataTypes.STRING, allowNull: false },
   }, {
     sequelize,
     tableName: 'tb_liberation_cashflow',

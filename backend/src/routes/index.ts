@@ -7,6 +7,7 @@ import validatorRouter from './validator.routes'
 import proposalRouter from './proposal.routes'
 import userRouter from './user.routes'
 import notificationRouter from './notification.routes'
+import liberationRouter from './liberation.routes'
 
 const routes = Router();
 
@@ -18,5 +19,6 @@ routes.use('/tickets', ticketRouter);
 routes.use('/valid', validatorRouter);
 routes.use('/proposal', proposalRouter);
 routes.use('/notification', notificationRouter);
+routes.use('/liberation', liberationRouter);
 
 export default routes;

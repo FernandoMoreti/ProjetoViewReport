@@ -23,7 +23,7 @@ export function initLiberationCashflow(sequelize: Sequelize) {
     agent: { type: DataTypes.STRING, allowNull: false },
     obs: { type: DataTypes.STRING, allowNull: true },
     resolved: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    phone: { type: DataTypes.STRING, allowNull: false },
+    phone: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
   }, {
     sequelize,
     tableName: 'tb_liberation_cashflow',

@@ -130,7 +130,7 @@ function App() {
     "Bmg Seguro 53259",
     "Bmg Rotativo 53259",
     "BRB 360",
-    "BRB Inconta Validar",
+    "BRB Inconta",
     "BRB Red",
     "BTW",
     "Bv",

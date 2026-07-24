@@ -24,7 +24,7 @@ const map: Record<string, string> = {
   "Bmg Seguro 53259": "BMG 53259",
   "Bmg Rotativo 53259": "BMG 53259",
   "BRB 360": "BRB 360",
-  "BRB Inconta Validar": "BRB INCONTA",
+  "BRB Inconta": "BRB INCONTA",
   "BRB Red": "BRB RED",
   "BTW": "BTW",
   // "Bv": "BV",

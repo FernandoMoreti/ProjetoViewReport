@@ -59,7 +59,7 @@ function App() {
       formData.append("banco", banco)
 
       const blobExtraction = new Blob([responseFile.data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
 
       let url = window.URL.createObjectURL(blobExtraction);
@@ -155,7 +155,7 @@ function App() {
     "Jbcred",
     "Novo Saque",
     "Novo Saque Cartao",
-    "NBC",
+    // "NBC",
   ]
 
   return (

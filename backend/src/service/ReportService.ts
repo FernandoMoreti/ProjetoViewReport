@@ -15,6 +15,27 @@ class ReportService {
         }
     }
 
+    async getAlreadyEdit(name: string) {
+
+        const lastDotIndex = name.lastIndexOf(".");
+        const nomeSemExtensao = name.substring(0, lastDotIndex);
+        const extensao = name.substring(lastDotIndex);
+        name = `${nomeSemExtensao} - EDITADO${extensao}`;
+
+        try {
+            const report = await ReportRepository.getAlreadyEdit(name)
+
+            if (report) {
+                return true
+            }
+
+            return false
+
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getAllByIntervalDate(dateOfReport: string, dateFinal: string) {
         try {
             const reports = await ReportRepository.getAllByIntervalDate(dateOfReport, dateFinal)

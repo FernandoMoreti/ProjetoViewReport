@@ -11,6 +11,17 @@ class ReportController {
         }
     }
 
+    async getAlreadyEdit(req: Request, res: Response) {
+        try {
+            const { name } = req.body;
+
+            const alreadyExist = await ReportService.getAlreadyEdit(name)
+            return res.status(200).json({ alreadyExist: alreadyExist })
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getReportsByDate(req: Request, res: Response) {
 
         const { bank, date, dateFinal } = req.body;

@@ -20,6 +20,24 @@ class ReportRepository {
         }
     }
 
+    async getAlreadyEdit(name: string) {
+        try {
+            const report = await Report.findOne({
+                where: {
+                    filename: name
+                }
+            })
+
+            if (report) {
+                return report
+            }
+
+            return false
+        } catch (error) {
+            throw error
+        }
+    }
+
     async getAllByDate(dateOfReport: string) {
         try {
             const reports = await Report.findAll(

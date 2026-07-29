@@ -44,7 +44,21 @@ function App() {
 
     try {
 
-      const response = await fetch("http://192.168.1.90:5000/execute", {
+      const checkFilename = {
+        name: file.name
+      }
+
+      const alreadyEditResponse = await axios.post('http://localhost:3003/reports/checkAlreadyEdit', checkFilename)
+
+      if (alreadyEditResponse.data.alreadyExist) {
+        const continuar = window.confirm("Este arquivo já foi editado anteriormente. Deseja continuar a edição mesmo assim?");
+
+        if (!continuar) {
+          return;
+        }
+      }
+
+      const response = await fetch("http://127.0.0.1:5000/execute", {
         method: "POST",
         body: formData,
       })
@@ -53,19 +67,22 @@ function App() {
 
       const responseData = await response.json()
       const bank = await findBank(banco);
-
       if (bank == "Banco não localizado") {
         throw new Error(`Banco '${banco}' não esta mapeado no sistema.`);
       }
 
-      const listOfProposal = responseData.listOfProposal;
-      try {
-        const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
+      if (!alreadyEditResponse.data.alreadyExist) {
+        console.log("SALVEI PELA PRIMEIRA VEZ")
 
-        if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
+        const listOfProposal = responseData.listOfProposal;
+        try {
+          const responseProposals = await axios.post("http://localhost:3003/proposal", listOfProposal)
 
-      } catch (e) {
-        throw new Error("Erro ao salvar propostas no banco de dados: " + e)
+          if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
+
+        } catch (e) {
+          throw new Error("Erro ao salvar propostas no banco de dados: " + e)
+        }
       }
 
       const byteCharacters = atob(responseData.arquivo_base64);
@@ -86,19 +103,23 @@ function App() {
       a.click();
       window.URL.revokeObjectURL(url);
 
-      const report: ReportAttributes = {
-        dateOfReport: date,
-        bankId: bank,
-        filename: filename,
-        notreceived: false,
-        received: true,
-        processed: false,
-        processedAt: null
+      if (!alreadyEditResponse.data.alreadyExist) {
+        console.log("SALVEI O REPORT PELA PRIMEIRA VEZ")
+
+        const report: ReportAttributes = {
+          dateOfReport: date,
+          bankId: bank,
+          filename: filename,
+          notreceived: false,
+          received: true,
+          processed: false,
+          processedAt: null
+        }
+
+        await axios.post("http://localhost:3003/reports", { bank, reports: [report] });
+        alert("Dados salvos com sucesso!");
       }
 
-      await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
-
-      alert("Dados salvos com sucesso!");
       setValidar(true)
     } catch(error) {
       console.error("Erro ao enviar:", error)
@@ -119,12 +140,14 @@ function App() {
     "Amigoz",
     "Bmg Bonus 34362",
     "Bmg Cartao Beneficio 34362",
+    "Bmg Consig 34362",
     "Bmg Saldo 34362",
     "Bmg Saque 34362",
     "Bmg Seguro 34362",
     "Bmg Rotativo 34362",
     "Bmg Bonus 53259",
     "Bmg Cartao Beneficio 53259",
+    "Bmg Consig 53259",
     "Bmg Saldo 53259",
     "Bmg Saque 53259",
     "Bmg Seguro 53259",

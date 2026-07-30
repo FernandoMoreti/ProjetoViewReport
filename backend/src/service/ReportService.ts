@@ -21,6 +21,7 @@ class ReportService {
         const nomeSemExtensao = name.substring(0, lastDotIndex);
         const extensao = name.substring(lastDotIndex);
         name = `${nomeSemExtensao} - EDITADO${extensao}`;
+        console.log(name)
 
         try {
             const report = await ReportRepository.getAlreadyEdit(name)

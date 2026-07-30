@@ -22,11 +22,14 @@ class ReportRepository {
 
     async getAlreadyEdit(name: string) {
         try {
+            console.log(name)
             const report = await Report.findOne({
                 where: {
                     filename: name
                 }
             })
+
+            console.log(report)
 
             if (report) {
                 return report

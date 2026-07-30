@@ -50,6 +50,7 @@ function App() {
 
       const alreadyEditResponse = await axios.post('http://192.168.1.90:30000/reports/checkAlreadyEdit', checkFilename)
 
+      console.log(alreadyEditResponse.data.alreadyExist)
       if (alreadyEditResponse.data.alreadyExist) {
         const continuar = window.confirm("Este arquivo já foi editado anteriormente. Deseja continuar a edição mesmo assim?");
 
@@ -72,7 +73,6 @@ function App() {
       }
 
       if (!alreadyEditResponse.data.alreadyExist) {
-        console.log("SALVEI PELA PRIMEIRA VEZ")
 
         const listOfProposal = responseData.listOfProposal;
         try {
@@ -104,7 +104,6 @@ function App() {
       window.URL.revokeObjectURL(url);
 
       if (!alreadyEditResponse.data.alreadyExist) {
-        console.log("SALVEI O REPORT PELA PRIMEIRA VEZ")
 
         const report: ReportAttributes = {
           dateOfReport: date,

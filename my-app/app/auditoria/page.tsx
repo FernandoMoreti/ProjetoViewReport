@@ -6,7 +6,8 @@ import axios from 'axios'
 import {
   Calendar, CheckCircle2, DollarSign, Activity,
   TrendingUp, Search, Filter, Building2, FileText,
-  Download
+  Download,
+  Loader
 } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, 
@@ -32,6 +33,7 @@ export default function Dashboard() {
 
   const [data, setData] = useState<CommissionData[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingDownload, setLoadingDownload] = useState(false)
   const [initialDate, setInitialDate] = useState(todayStr)
   const [finalDate, setFinalDate] = useState(todayStr)
   const [searchTerm, setSearchTerm] = useState('')
@@ -95,6 +97,12 @@ export default function Dashboard() {
   async function handleDownload(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
 
+    if (loadingDownload) {
+      return
+    }
+
+    setLoadingDownload(true)
+
     try {
       const response = await axios.get("http://192.168.1.90:30000/proposal/excel", {
         params: { startDate: initialDate, finalDate: finalDate },
@@ -111,6 +119,8 @@ export default function Dashboard() {
 
     } catch (error) {
       console.error("Erro no download:", error);
+    } finally {
+      setLoadingDownload(false)
     }
   }
 
@@ -212,7 +222,7 @@ export default function Dashboard() {
               </select>
             </div>
             <button onClick={(e) => handleDownload(e)} className="flex relative w-10 border border-white/10 rounded-xl py-3 duration-300 hover:-translate-y-1 justify-center px-10">
-              <Download className="absolute top-1/2 -translate-y-1/2 text-purple-300/50" size={18} />
+              {loadingDownload ? (<Loader className="absolute top-1/2 -translate-y-1/2 text-purple-300/50 animate-spin" size={18} />) : (<Download className="absolute top-1/2 -translate-y-1/2 text-purple-300/50" size={18} />)}
             </button>
           </div>
         </div>

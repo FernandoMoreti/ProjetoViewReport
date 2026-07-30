@@ -25,10 +25,14 @@ export class ProposalRepository {
         }
     }
 
-    async isDuplicate(proposal: string, type: string) {
+    async isDuplicate(proposal: string, type: string, valComission: number) {
         try {
             const hasProposal = await Proposal.findOne({
-                where: {proposal: String(proposal), typeCommission: type}
+                where: {
+                    proposal: String(proposal),
+                    typeCommission: type,
+                    valCommission: valComission
+                }
             })
 
             if (!hasProposal) {

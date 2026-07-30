@@ -114,7 +114,7 @@ export default function DayOfWeek() {
     .sort((a, b) => {
       const nomeA = a.bank?.name || "";
       const nomeB = b.bank?.name || "";
-      
+
       return nomeA.localeCompare(nomeB);
     });
   }, [bankByDay, filteredDayOfWeek]);
@@ -129,9 +129,9 @@ export default function DayOfWeek() {
           <p className="text-gray-400 mt-2">Acompanhamento de bancos</p>
         </div>
         <div className="flex items-center gap-3">
-          <select 
-            onChange={(e) => setFilteredDayOfWeek(e.target.value)} 
-            name="dayFilter" 
+          <select
+            onChange={(e) => setFilteredDayOfWeek(e.target.value)}
+            name="dayFilter"
             id="dayFilter"
             className="bg-[#1a1a1a] border border-purple-500/30 text-gray-300 p-3 rounded-xl outline-none focus:border-purple-500 hover:border-purple-500/60 transition-all cursor-pointer text-sm font-medium shadow-sm"
           >

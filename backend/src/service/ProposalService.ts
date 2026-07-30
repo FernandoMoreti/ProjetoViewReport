@@ -20,7 +20,7 @@ class ProposalService {
 
         try {
             for (let proposal of proposals) {
-                proposal.duplicate = await ProposalRepository.isDuplicate(proposal.proposal, proposal.typeCommission)
+                proposal.duplicate = await ProposalRepository.isDuplicate(proposal.proposal, proposal.typeCommission, proposal.valCommission)
             }
 
             const newProposals = await ProposalRepository.create(proposals)

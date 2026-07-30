@@ -293,8 +293,8 @@ function App() {
                 className='logo w-120 rounded-br-4xl rounded-tr-4xl'
                 src={logo}
                 alt="Logo Workbank"
-                width={120}
-                height={120}
+                width={400}
+                height={400}
               />
             </div>
           </div>

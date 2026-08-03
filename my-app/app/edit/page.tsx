@@ -50,7 +50,6 @@ function App() {
 
       const alreadyEditResponse = await axios.post('http://192.168.1.90:30000/reports/checkAlreadyEdit', checkFilename)
 
-      console.log(alreadyEditResponse.data.alreadyExist)
       if (alreadyEditResponse.data.alreadyExist) {
         const continuar = window.confirm("Este arquivo já foi editado anteriormente. Deseja continuar a edição mesmo assim?");
 
@@ -143,6 +142,7 @@ function App() {
     "Bmg Saldo 34362",
     "Bmg Saque 34362",
     "Bmg Seguro 34362",
+    "Bmg Reposicao Cartao 34362",
     "Bmg Rotativo 34362",
     "Bmg Bonus 53259",
     "Bmg Cartao Beneficio 53259",
@@ -150,6 +150,7 @@ function App() {
     "Bmg Saldo 53259",
     "Bmg Saque 53259",
     "Bmg Seguro 53259",
+    "Bmg Reposicao Cartao 53259",
     "Bmg Rotativo 53259",
     "BRB 360",
     "BRB Inconta",

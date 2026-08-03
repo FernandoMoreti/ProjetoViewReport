@@ -132,11 +132,11 @@ function App() {
         const encodedError = error.response.headers['x-error-message'];
         const errorMessage = encodedError ? decodeURIComponent(encodedError) : "Erro desconhecido";
         setErrorMessage(errorMessage)
-        console.error("Impacto/Erro capturado no header:", errorMessage);
+        console.log("Impacto/Erro capturado no header:", errorMessage);
       } else {
-        console.error("Erro de conexão:", error);
+        console.log("Erro de conexão:", error);
       }
-      console.error("Erro ao enviar:", error)
+      console.log("Erro ao enviar:", error)
       setValidar(false)
     } finally {
       setMostrar(true)
@@ -155,6 +155,7 @@ function App() {
     "Jbcred",
     "Novo Saque",
     "Novo Saque Cartao",
+    "Baixa Automatica",
     // "NBC",
   ]
 

@@ -26,6 +26,7 @@ function App() {
   const [validar, setValidar] = useState(false)
   const [mostrar, setMostrar] = useState(false)
   const [mensagem, setMensagem] = useState(false)
+  const [errorMensagem, setErrorMensagem] = useState("Não foi possivel editar")
   const [date, setDate] = useState(todayStr)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -63,7 +64,16 @@ function App() {
         body: formData,
       })
 
-      if (!response.ok) throw new Error("Erro no processamento do arquivo");
+      if (!response.ok) {
+        let errorMsg = "Erro no processamento do arquivo";
+        try {
+          const errorData = await response.json();
+          errorMsg = errorData.error || errorData.message || JSON.stringify(errorData);
+        } catch {
+          errorMsg = await response.text() || errorMsg;
+        }
+        throw new Error(errorMsg);
+      }
 
       const responseData = await response.json()
       const bank = await findBank(banco);
@@ -119,9 +129,11 @@ function App() {
       }
 
       setValidar(true)
-    } catch(error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch(error: any) {
       console.error("Erro ao enviar:", error)
-      setValidar(false)
+      setErrorMensagem(error.message || "Não foi possivel editar");
+      setValidar(false);
     } finally {
       setMostrar(true)
       setLoading(false)
@@ -225,7 +237,7 @@ function App() {
       <div className='flex flex-col h-full'>
         <section className='flex flex-col h-full items-center bg-[#1a0b2e] text-gray-100 font-sans'>
           <p className={`absolute z-10 p-3 text-white transition-opacity duration-500 rounded-b-2xl font-bold text-center ${mostrar ? ' opacity-100 ' : ' opacity-0 '}${validar ? 'bg-purple-600 shadow-[0_0_15px_rgba(168,85,247,0.4)]' : 'bg-red-600'}`}>
-            {validar ? "Editado com sucesso" : mensagem ? "Faltando credenciais" : "Não foi possivel editar"}
+            {validar ? "Editado com sucesso" : mensagem ? "Faltando credenciais" : errorMensagem}
           </p>
 
           <div className='flex-1 flex justify-center items-center backdrop-blur-sm'>

@@ -20,7 +20,6 @@ function App() {
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const [file, setFile] = useState<File | null>(null)
   const [banco, setBanco] = useState("")
   const [loading, setLoading] = useState(false)
   const [validar, setValidar] = useState(false)
@@ -51,6 +50,10 @@ function App() {
       const responseFile = await axios.post('http://192.168.1.90:3008/api/rpa', payload, {
         responseType: 'arraybuffer'
       });
+
+      if (banco == "Baixa Automatica") {
+        setValidar(true)
+      }
 
       const encodedFilename = responseFile.headers['x-filename'];
       const filenameExtraction = encodedFilename ? decodeURIComponent(encodedFilename) : 'arquivo.xlsx';
@@ -145,7 +148,7 @@ function App() {
       setTimeout(() => {
         setMensagem(false)
         setMostrar(false)
-      }, 2000)
+      }, 5000)
     }
   }
 

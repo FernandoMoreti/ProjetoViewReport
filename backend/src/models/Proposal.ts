@@ -7,7 +7,7 @@ export class Proposal extends Model<ProposalAttriibutes, ProposalCreationAttribu
   public id!: number;
   public bank!: string;
   public proposal!: string;
-  public date!: string;
+  public date!: Date;
   public typeCommission!: string;
   public valBase!: number;
   public valCommission!: number;
@@ -20,7 +20,7 @@ export function initProposal(sequelize: Sequelize) {
     id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     bank: { type: DataTypes.STRING, allowNull: false },
     proposal: { type: DataTypes.STRING, allowNull: false },
-    date: { type: DataTypes.STRING, allowNull: false },
+    date: { type: DataTypes.DATEONLY, allowNull: false },
     typeCommission: { type: DataTypes.STRING, allowNull: false },
     valBase: { type: DataTypes.FLOAT, allowNull: false },
     valCommission: { type: DataTypes.FLOAT, allowNull: false },

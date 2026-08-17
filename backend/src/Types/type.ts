@@ -45,7 +45,7 @@ export interface ProposalAttriibutes {
   id: number;
   bank: string;
   proposal: string;
-  date: string;
+  date: Date;
   typeCommission: string;
   valBase: number;
   valCommission: number;

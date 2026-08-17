@@ -39,6 +39,7 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedBank, setSelectedBank] = useState('TODOS')
   const [selectedType, setSelectedType] = useState('TODOS')
+  const [visibleDuplicates, setVisibleDuplicates] = useState(50);
 
   useEffect(() => {
     async function fetchData() {
@@ -59,6 +60,10 @@ export default function Dashboard() {
     }
     fetchData()
   }, [initialDate, finalDate])
+
+  useEffect(() => {
+    setVisibleDuplicates(50);
+  }, [searchTerm, selectedBank, selectedType, initialDate, finalDate]);
 
   const banks = useMemo(() => ['TODOS', ...Array.from(new Set(data.map(item => item.bank)))], [data])
   const commissionTypes = useMemo(() => ['TODOS', ...Array.from(new Set(data.map(item => item.typeCommission)))], [data])
@@ -85,6 +90,7 @@ export default function Dashboard() {
 
       return acc
     }, 0)
+
     const totalCommission = filteredData.reduce((acc, curr) => acc + curr.valCommission, 0)
     return {
       count: filteredData.length,
@@ -126,7 +132,7 @@ export default function Dashboard() {
 
   const duplicateData = useMemo(() => {
     const proposalCounts = filteredData.reduce((acc, curr) => {
-      const key = `${curr.proposal}|${curr.typeCommission}`;
+      const key = `${curr.proposal}|${curr.typeCommission}|${curr.valCommission}`;
       acc[key] = (acc[key] || 0) + 1;
 
       return acc;
@@ -331,20 +337,35 @@ export default function Dashboard() {
                   </thead>
                   <tbody>
                     {duplicateData.length > 0 ? (
-                      duplicateData.map((row) => (
-                        <tr key={row.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="px-4 py-3 font-medium text-white">{row.bank}</td>
-                          <td className="px-4 py-3 text-purple-200">{row.proposal}</td>
-                          <td className="px-4 py-3">
-                            <span className="px-2 py-1 rounded-md text-xs font-medium bg-purple-500/20 text-purple-300">
-                              {row.typeCommission}
-                            </span>
-                          </td>
-                          <td className={`px-4 py-3 text-right ${row.valCommission > 0 ? "text-green-400" : "text-red-400" } font-semibold`}>
-                            {formatCurrency(row.valCommission)}
-                          </td>
-                        </tr>
-                      ))
+                      <>
+                        {duplicateData.slice(0, visibleDuplicates).map((row) => (
+                          <tr key={row.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td className="px-4 py-3 font-medium text-white">{row.bank}</td>
+                            <td className="px-4 py-3 text-purple-200">{row.proposal}</td>
+                            <td className="px-4 py-3">
+                              <span className="px-2 py-1 rounded-md text-xs font-medium bg-purple-500/20 text-purple-300">
+                                {row.typeCommission}
+                              </span>
+                            </td>
+                            <td className={`px-4 py-3 text-right ${row.valCommission > 0 ? "text-green-400" : "text-red-400" } font-semibold`}>
+                              {formatCurrency(row.valCommission)}
+                            </td>
+                          </tr>
+                        ))}
+
+                        {visibleDuplicates < duplicateData.length && (
+                          <tr>
+                            <td colSpan={4} className="text-center py-4">
+                              <button
+                                onClick={() => setVisibleDuplicates(prev => prev + 50)}
+                                className="px-4 py-2 bg-purple-600/30 hover:bg-purple-600/50 text-purple-200 text-xs rounded-xl transition-colors"
+                              >
+                                Carregar mais ({duplicateData.length - visibleDuplicates} restantes)
+                              </button>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     ) : (
                       <tr>
                         <td colSpan={4} className="text-center py-8 text-purple-300/50">
@@ -359,7 +380,6 @@ export default function Dashboard() {
           </>
         )}
       </div>
-      
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }

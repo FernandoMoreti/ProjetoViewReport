@@ -148,7 +148,7 @@ function App() {
   const bancos = [
     "Aki",
     "Amigoz",
-    "Bmg Bonus 34362",
+    // "Bmg Bonus 34362",
     "Bmg Cartao Beneficio 34362",
     "Bmg Consig 34362",
     "Bmg Saldo 34362",
@@ -156,7 +156,7 @@ function App() {
     "Bmg Seguro 34362",
     "Bmg Reposicao Cartao 34362",
     "Bmg Rotativo 34362",
-    "Bmg Bonus 53259",
+    // "Bmg Bonus 53259",
     "Bmg Cartao Beneficio 53259",
     "Bmg Consig 53259",
     "Bmg Saldo 53259",

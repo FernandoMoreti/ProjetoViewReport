@@ -5,13 +5,21 @@ class ProposalService {
     async getAll(startDate: string, finalDate: string) {
 
         try {
-            const banks = await ProposalRepository.getAll(startDate, finalDate)
-            return banks
+            const proposals = await ProposalRepository.getAll(startDate, finalDate)
+            return proposals
         } catch (error) {
             throw error
         }
     }
 
+    async getPaginated(startDate: string, finalDate: string, page: number, limit: number): Promise<ProposalAttriibutes[]> {
+        try {
+            const proposals = await ProposalRepository.getPaginated(startDate, finalDate, page, limit)
+            return proposals
+        } catch(error: any) {
+            throw error
+        }
+    }
     async getByName(bank: any) {
         // return await ProposalRepository.getByName(bank)
     }

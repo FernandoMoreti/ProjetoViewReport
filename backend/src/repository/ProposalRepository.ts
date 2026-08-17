@@ -5,15 +5,16 @@ import { ProposalAttriibutes } from "../Types/type"
 export class ProposalRepository {
     async getAll(startDate: string, finalDate: string) {
 
-        const endOfDay = `${finalDate}T23:59:59.999Z`
+        const start = `${startDate} 00:00:00`;
+        const end = `${finalDate} 23:59:59`;
 
         try {
             return Proposal.findAll({
                 raw: true,
                 where: {
-                    created_at: {
-                        [Op.gte]: new Date(startDate),
-                        [Op.lte]: new Date(endOfDay)
+                    date: {
+                        [Op.gte]: new Date(start),
+                        [Op.lte]: new Date(end)
                     }
                 },
                 order: [
@@ -21,6 +22,32 @@ export class ProposalRepository {
                 ]
             })
         } catch (error) {
+            throw error
+        }
+    }
+
+    async getPaginated(startDate: string, finalDate: string, page: number, limit: number): Promise<ProposalAttriibutes[]> {
+
+        const start = `${startDate} 00:00:00`;
+        const end = `${finalDate} 23:59:59`;
+
+        try {
+            const offset = (page - 1) * limit;
+
+            const proposals: ProposalAttriibutes[] = await Proposal.findAll({
+                where: {
+                    date: {
+                        [Op.gte]: new Date(start),
+                        [Op.lte]: new Date(end)
+                    }
+                },
+                limit: limit,
+                offset: offset,
+                raw: true
+            })
+
+            return proposals
+        } catch(error: any) {
             throw error
         }
     }
@@ -68,11 +95,11 @@ export class ProposalRepository {
                 return newProposals;
             } catch (error: any) {
                 console.error("Erro no Sequelize:", error.name, error.message);
-                
+
                 if (error.errors) {
                     console.error("Detalhes da validação:", error.errors.map((e: any) => e.message));
                 }
-                
+
                 throw error;
             }
         } catch (error) {

@@ -1,8 +1,6 @@
 'use client'
 
 import React, { useState } from 'react'
-import logo from "../../public/logo.jpg"
-import Image from 'next/image';
 import axios from 'axios';
 import { findBank } from '../utils/utils'
 
@@ -27,6 +25,7 @@ function App() {
   const [mensagem, setMensagem] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [date, setDate] = useState(todayStr)
+  const [logs, setLogs] = useState<string[]>([])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -40,115 +39,124 @@ function App() {
       return
     }
 
+    setLogs([])
     setLoading(true)
+
     try {
 
-      const payload = {
-        bank: banco
-      }
-
-      const responseFile = await axios.post('http://192.168.1.90:3008/api/rpa', payload, {
-        responseType: 'arraybuffer'
+      const responseFile = await fetch('http://localhost:3008/api/rpa/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bank: banco }),
       });
 
-      if (banco == "Baixa Automatica") {
-        setValidar(true)
+      if (!responseFile.body) throw new Error("Sem corpo de resposta");
+
+      const reader = responseFile.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          try {
+            const parsed = JSON.parse(line);
+
+            if (parsed.type === 'log') {
+              setLogs((prev) => [...prev, parsed.message]);
+            } else if (parsed.type === 'error') {
+              setErrorMessage(parsed.message);
+              setValidar(false);
+              setMostrar(true);
+            } else if (parsed.type === 'success') {
+              setValidar(true);
+              setMostrar(true);
+            } else if (parsed.type === 'file') {
+              const { fileData, filename } = parsed;
+
+              const formData = new FormData()
+              formData.append('banco', banco)
+              formData.append('arquivo', fileData)
+
+              const response = await fetch("http://127.0.0.1:5000/execute", {
+                method: "POST",
+                body: formData,
+              })
+
+              if (!response.ok) throw new Error("Erro no processamento do arquivo");
+
+              const responseData = await response.json()
+              const bank = await findBank(banco);
+
+              if (bank == "Banco não localizado") {
+                throw new Error(`Banco '${banco}' não esta mapeado no sistema.`);
+              }
+
+              const listOfProposal = responseData.listOfProposal;
+              try {
+                const responseProposals = await axios.post("http://localhost:3003/proposal", listOfProposal)
+
+                if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
+
+              } catch (e) {
+                throw new Error("Erro ao salvar propostas no banco de dados: " + e)
+              }
+
+              const byteCharacters = atob(fileData);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const blob = new Blob([new Uint8Array(byteNumbers)], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+              });
+
+              const newFilename = filename.replace(".xlsx", "") + " - EDITADO.xlsx" || "arquivo.xlsx";
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = newFilename;
+              a.click();
+              window.URL.revokeObjectURL(url);
+
+              const report: ReportAttributes = {
+                dateOfReport: date,
+                bankId: bank,
+                filename: filename,
+                notreceived: false,
+                received: true,
+                processed: false,
+                processedAt: null
+              }
+
+              await axios.post("http://localhost:3003/reports", { bank, reports: [report] });
+
+              alert("Dados salvos com sucesso!");
+              setValidar(true);
+              setMostrar(true);
+            }
+          } catch (err) {
+            console.error("Erro ao processar linha do stream:", err);
+          }
+        }
       }
-
-      const encodedFilename = responseFile.headers['x-filename'];
-      const filenameExtraction = encodedFilename ? decodeURIComponent(encodedFilename) : 'arquivo.xlsx';
-
-      const formData = new FormData();
-      formData.append("banco", banco)
-
-      const blobExtraction = new Blob([responseFile.data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-
-      let url = window.URL.createObjectURL(blobExtraction);
-      let a = document.createElement("a");
-      a.href = url;
-      a.download = filenameExtraction
-      a.click();
-      window.URL.revokeObjectURL(url);
-
-      formData.append("arquivo", blobExtraction);
-
-      const response = await fetch("http://192.168.1.90:5000/execute", {
-        method: "POST",
-        body: formData,
-      })
-
-      if (!response.ok) throw new Error("Erro no processamento do arquivo");
-
-      const responseData = await response.json()
-      const bank = await findBank(banco);
-
-      if (bank == "Banco não localizado") {
-        throw new Error(`Banco '${banco}' não esta mapeado no sistema.`);
-      }
-
-      const listOfProposal = responseData.listOfProposal;
-      try {
-        const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
-
-        if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
-
-      } catch (e) {
-        throw new Error("Erro ao salvar propostas no banco de dados: " + e)
-      }
-
-      const byteCharacters = atob(responseData.arquivo_base64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-      const byteArray = new Uint8Array(byteNumbers);
-      const blob = new Blob([byteArray], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      });
-
-      const filename = filenameExtraction.replace(".xlsx", "") + " - EDITADO.xlsx" || "arquivo.xlsx";
-      url = window.URL.createObjectURL(blob);
-      a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.click();
-      window.URL.revokeObjectURL(url);
-
-      const report: ReportAttributes = {
-        dateOfReport: date,
-        bankId: bank,
-        filename: filename,
-        notreceived: false,
-        received: true,
-        processed: false,
-        processedAt: null
-      }
-
-      await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
-
-      alert("Dados salvos com sucesso!");
-      setValidar(true)
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error) && error.response) {
-        const encodedError = error.response.headers['x-error-message'];
-        const errorMessage = encodedError ? decodeURIComponent(encodedError) : "Erro desconhecido";
-        setErrorMessage(errorMessage)
-        console.log("Impacto/Erro capturado no header:", errorMessage);
-      } else {
-        console.log("Erro de conexão:", error);
-      }
-      console.log("Erro ao enviar:", error)
-      setValidar(false)
+    } catch (error) {
+      console.error("Erro na conexão:", error);
+      setErrorMessage("Erro de conexão com o servidor.");
+      setValidar(false);
+      setMostrar(true);
     } finally {
-      setMostrar(true)
-      setLoading(false)
-
+      setLoading(false);
       setTimeout(() => {
-        setMensagem(false)
-        setMostrar(false)
-      }, 5000)
+        setMostrar(false);
+        setErrorMessage("");
+      }, 5000);
     }
   }
 
@@ -169,15 +177,15 @@ function App() {
             {validar ? "Editado com sucesso" : mensagem ? "Faltando credenciais" : errorMessage}
           </p>
 
-          <div className='flex-1 flex justify-center items-center backdrop-blur-sm'>
-            <div className='flex flex-col p-10 h-100 w-120 bg-[#1e132f] border border-purple-500/20 shadow-2xl shadow-black/50 rounded-4xl'>
-              <header className='mb-8 text-center'>
+          <div className='flex-1 flex gap-10 p-20 justify-center items-center backdrop-blur-sm'>
+            <div className='flex flex-col justify-center items-center p-10 gap-20 h-full w-150 bg-[#1e132f] border border-purple-500/20 shadow-2xl shadow-black/50 rounded-4xl'>
+              <header className='text-center'>
                 <h1 className='text-2xl font-bold bg-linear-to-r from-purple-300 to-purple-600 bg-clip-text text-transparent'>
                   Extração de Relatórios
                 </h1>
               </header>
 
-              <form onSubmit={handleSubmit} className='flex flex-col justify-center h-full gap-5 w-full' action="">
+              <form onSubmit={handleSubmit} className='flex flex-col justify-center gap-5 w-full' action="">
 
                 <div>
                   <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Escolha o banco:</p>
@@ -196,7 +204,7 @@ function App() {
                 </div>
 
                 <button
-                    className='mt-4 bg-purple-600 text-white font-bold rounded-xl p-5 transition-all duration-300 cursor-pointer hover:bg-purple-500 hover:-translate-y-1 shadow-[0_0_20px_rgba(168,85,247,0.3)] active:scale-95' 
+                    className='bg-purple-600 text-white font-bold rounded-xl p-5 transition-all duration-300 cursor-pointer hover:bg-purple-500 hover:-translate-y-1 shadow-[0_0_20px_rgba(168,85,247,0.3)] active:scale-95' 
                     type='submit'
                 >
                   {loading ? (
@@ -207,6 +215,12 @@ function App() {
                   ) : "Extrair arquivo"}
                 </button>
               </form>
+            </div>
+            <div className='flex flex-col h-full w-full bg-[#1e132f] border border-purple-500/20 shadow-xl rounded-2xl p-5'>
+              <p className='text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2'>Console de Execução:</p>
+              <div className='bg-[#0f081a] text-green-400 font-mono p-4 rounded-xl h-full overflow-y-auto'>
+                {logs.map((log, index) => <div key={index}>{log}</div>)}
+              </div>
             </div>
           </div>
         </section>

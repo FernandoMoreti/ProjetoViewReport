@@ -49,7 +49,7 @@ function App() {
         name: file.name
       }
 
-      const alreadyEditResponse = await axios.post('http://192.168.1.90:30000/reports/checkAlreadyEdit', checkFilename)
+      const alreadyEditResponse = await axios.post('http://localhost:3003/reports/checkAlreadyEdit', checkFilename)
 
       if (alreadyEditResponse.data.alreadyExist) {
         const continuar = window.confirm("Este arquivo já foi editado anteriormente. Deseja continuar a edição mesmo assim?");
@@ -59,7 +59,7 @@ function App() {
         }
       }
 
-      const response = await fetch("http://192.168.1.90:5000/execute", {
+      const response = await fetch("http://127.0.0.1:5000/execute", {
         method: "POST",
         body: formData,
       })
@@ -85,7 +85,7 @@ function App() {
 
         const listOfProposal = responseData.listOfProposal;
         try {
-          const responseProposals = await axios.post("http://192.168.1.90:30000/proposal", listOfProposal)
+          const responseProposals = await axios.post("http://localhost:3003/proposal", listOfProposal)
 
           if (!responseProposals.status) throw new Error("Erro ao salvar propostas no banco de dados")
 
@@ -124,7 +124,7 @@ function App() {
           processedAt: null
         }
 
-        await axios.post("http://192.168.1.90:30000/reports", { bank, reports: [report] });
+        await axios.post("http://localhost:3003/reports", { bank, reports: [report] });
         alert("Dados salvos com sucesso!");
       }
 

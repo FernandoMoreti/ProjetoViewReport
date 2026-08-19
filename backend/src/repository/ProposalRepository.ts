@@ -43,6 +43,7 @@ export class ProposalRepository {
                 },
                 limit: limit,
                 offset: offset,
+                order: [['id', 'ASC']],
                 raw: true
             })
 
